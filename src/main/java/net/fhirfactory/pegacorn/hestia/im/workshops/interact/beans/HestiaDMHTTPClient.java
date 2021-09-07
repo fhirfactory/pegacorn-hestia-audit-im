@@ -111,12 +111,13 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
     }
 
     public MethodOutcome writeAuditEvent(String auditEventJSONString){
+        getLogger().debug(".writeAuditEvent(): Entry, auditEventJSONString->{}", auditEventJSONString);
         MethodOutcome outcome = null;
         if(persistAuditEvent()){
             LOG.info(".writeAuditEvent(): Writing to Hestia-Audit-DM");
             // write the event to the Persistence service
             AuditEvent auditEvent = getFHIRContextUtility().getJsonParser().parseResource(AuditEvent.class, auditEventJSONString);
-            getClient().create()
+            outcome = getClient().create()
                     .resource(auditEvent)
                     .prettyPrint()
                     .encodedJson()
@@ -124,6 +125,7 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
         } else {
             LOG.info(auditEventJSONString);
         }
+        getLogger().info(".writeAuditEvent(): Exit, outcome->{}", outcome);
         return(outcome);
     }
 

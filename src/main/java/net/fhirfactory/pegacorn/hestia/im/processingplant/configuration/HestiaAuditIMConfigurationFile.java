@@ -21,15 +21,12 @@
  */
 package net.fhirfactory.pegacorn.hestia.im.processingplant.configuration;
 
-import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.archetypes.ClusterServiceDeliverySubsystemPropertyFile;
 import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.archetypes.PetasosEnabledSubsystemPropertyFile;
 import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.interact.StandardInteractClientPortSegment;
 
-import javax.enterprise.context.ApplicationScoped;
-
 public class HestiaAuditIMConfigurationFile extends PetasosEnabledSubsystemPropertyFile {
 
-    StandardInteractClientPortSegment interactHestiaDMHTTPClient;
+    private StandardInteractClientPortSegment interactHestiaDMHTTPClient;
 
     public HestiaAuditIMConfigurationFile(){
         interactHestiaDMHTTPClient = new StandardInteractClientPortSegment();

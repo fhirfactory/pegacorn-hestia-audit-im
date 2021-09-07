@@ -29,6 +29,10 @@ import net.fhirfactory.pegacorn.components.capabilities.base.CapabilityUtilisati
 import net.fhirfactory.pegacorn.components.capabilities.base.CapabilityUtilisationResponse;
 import net.fhirfactory.pegacorn.components.dataparcel.DataParcelManifest;
 import net.fhirfactory.pegacorn.components.interfaces.topology.WorkshopInterface;
+import net.fhirfactory.pegacorn.components.transaction.model.SimpleResourceID;
+import net.fhirfactory.pegacorn.components.transaction.model.SimpleTransactionOutcome;
+import net.fhirfactory.pegacorn.components.transaction.valuesets.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.valuesets.TransactionTypeEnum;
 import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.base.ExternalSystemIPCEndpoint;
 import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.interact.StandardInteractClientTopologyEndpointPort;
 import net.fhirfactory.pegacorn.deployment.topology.model.nodes.external.ConnectedExternalSystemTopologyNode;
@@ -39,7 +43,9 @@ import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTop
 import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpoint;
 import net.fhirfactory.pegacorn.workshops.InteractWorkshop;
 import net.fhirfactory.pegacorn.wups.archetypes.petasosenabled.messageprocessingbased.InteractEgressMessagingGatewayWUP;
+import org.hl7.fhir.r4.model.AuditEvent;
 import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,15 +162,32 @@ public class HestiaAuditDMConnectionWUP extends InteractEgressMessagingGatewayWU
         } else {
             return(false);
         }
-        return(true);
+        return(false);
     }
 
     private CapabilityUtilisationResponse executeWriteAuditEventTask(CapabilityUtilisationRequest request){
         String auditEventAsString = request.getRequestContent();
         MethodOutcome methodOutcome = hestiaDM.writeAuditEvent(auditEventAsString);
         String methodOutcomeAsString = null;
+        SimpleTransactionOutcome simpleOutcome = new SimpleTransactionOutcome();
+        SimpleResourceID resourceID = new SimpleResourceID();
+        if(methodOutcome.getId().hasResourceType()){
+            resourceID.setResourceType(methodOutcome.getId().getResourceType());
+        } else {
+            resourceID.setResourceType("AuditEvent");
+        }
+        resourceID.setValue(methodOutcome.getId().getValue());
+        if(methodOutcome.getId().hasVersionIdPart()) {
+            resourceID.setVersion(methodOutcome.getId().getVersionIdPart());
+        } else {
+            resourceID.setVersion(SimpleResourceID.DEFAULT_VERSION);
+        }
+        simpleOutcome.setResourceID(resourceID);
+        simpleOutcome.setTransactionStatus(TransactionStatusEnum.CREATION_FINISH);
+        simpleOutcome.setTransactionType(TransactionTypeEnum.CREATE);
+        simpleOutcome.setTransactionSuccessful(methodOutcome.getCreated());
         try {
-            methodOutcomeAsString = jsonMapper.writeValueAsString(methodOutcome);
+            methodOutcomeAsString = jsonMapper.writeValueAsString(simpleOutcome);
         } catch (JsonProcessingException e) {
             getLogger().warn(".executeWriteAuditEventTask(): Cannot convert MethodOutcome to string, error->",e);
         }
@@ -183,17 +206,23 @@ public class HestiaAuditDMConnectionWUP extends InteractEgressMessagingGatewayWU
     private CapabilityUtilisationResponse executeFauxWriteAuditEventTask(CapabilityUtilisationRequest request){
         getLogger().info(request.getRequestContent());
         CapabilityUtilisationResponse response = new CapabilityUtilisationResponse();
-        String methodOutcomeAsString = null;
-        MethodOutcome fauxOutcome = new MethodOutcome();
-        fauxOutcome.setCreated(true);
-        fauxOutcome.setId(new IdType(UUID.randomUUID().toString()));
+        String simpleOutcomeAsAString = null;
+        SimpleTransactionOutcome fauxOutcome = new SimpleTransactionOutcome();
+        SimpleResourceID resourceID = new SimpleResourceID();
+        resourceID.setResourceType("AuditEvent");
+        resourceID.setValue(UUID.randomUUID().toString());
+        resourceID.setVersion(SimpleResourceID.DEFAULT_VERSION);
+        fauxOutcome.setResourceID(resourceID);
+        fauxOutcome.setTransactionStatus(TransactionStatusEnum.CREATION_FINISH);
+        fauxOutcome.setTransactionType(TransactionTypeEnum.CREATE);
+        fauxOutcome.setTransactionSuccessful(true);
         try {
-            methodOutcomeAsString = jsonMapper.writeValueAsString(fauxOutcome);
+            simpleOutcomeAsAString = jsonMapper.writeValueAsString(fauxOutcome);
         } catch (JsonProcessingException e) {
             getLogger().warn(".executeWriteAuditEventTask(): Cannot convert MethodOutcome to string, error->",e);
         }
-        if(methodOutcomeAsString == null){
-            response.setResponseContent(methodOutcomeAsString);
+        if(simpleOutcomeAsAString != null){
+            response.setResponseContent(simpleOutcomeAsAString);
             response.setSuccessful(true);
         } else {
             response.setSuccessful(false);
