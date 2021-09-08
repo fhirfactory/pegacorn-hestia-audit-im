@@ -168,32 +168,38 @@ public class HestiaAuditDMConnectionWUP extends InteractEgressMessagingGatewayWU
     private CapabilityUtilisationResponse executeWriteAuditEventTask(CapabilityUtilisationRequest request){
         String auditEventAsString = request.getRequestContent();
         MethodOutcome methodOutcome = hestiaDM.writeAuditEvent(auditEventAsString);
-        String methodOutcomeAsString = null;
+        String simpleOutcomeAsString = null;
         SimpleTransactionOutcome simpleOutcome = new SimpleTransactionOutcome();
         SimpleResourceID resourceID = new SimpleResourceID();
-        if(methodOutcome.getId().hasResourceType()){
-            resourceID.setResourceType(methodOutcome.getId().getResourceType());
+        if(methodOutcome.getCreated()) {
+            if(methodOutcome.getId() != null) {
+                if (methodOutcome.getId().hasResourceType()) {
+                    resourceID.setResourceType(methodOutcome.getId().getResourceType());
+                } else {
+                    resourceID.setResourceType("AuditEvent");
+                }
+                resourceID.setValue(methodOutcome.getId().getValue());
+                if (methodOutcome.getId().hasVersionIdPart()) {
+                    resourceID.setVersion(methodOutcome.getId().getVersionIdPart());
+                } else {
+                    resourceID.setVersion(SimpleResourceID.DEFAULT_VERSION);
+                }
+                simpleOutcome.setResourceID(resourceID);
+            }
+            simpleOutcome.setTransactionStatus(TransactionStatusEnum.CREATION_FINISH);
         } else {
-            resourceID.setResourceType("AuditEvent");
+            simpleOutcome.setTransactionStatus(TransactionStatusEnum.CREATION_FAILURE);
         }
-        resourceID.setValue(methodOutcome.getId().getValue());
-        if(methodOutcome.getId().hasVersionIdPart()) {
-            resourceID.setVersion(methodOutcome.getId().getVersionIdPart());
-        } else {
-            resourceID.setVersion(SimpleResourceID.DEFAULT_VERSION);
-        }
-        simpleOutcome.setResourceID(resourceID);
-        simpleOutcome.setTransactionStatus(TransactionStatusEnum.CREATION_FINISH);
         simpleOutcome.setTransactionType(TransactionTypeEnum.CREATE);
         simpleOutcome.setTransactionSuccessful(methodOutcome.getCreated());
         try {
-            methodOutcomeAsString = jsonMapper.writeValueAsString(simpleOutcome);
+            simpleOutcomeAsString = jsonMapper.writeValueAsString(simpleOutcome);
         } catch (JsonProcessingException e) {
             getLogger().warn(".executeWriteAuditEventTask(): Cannot convert MethodOutcome to string, error->",e);
         }
         CapabilityUtilisationResponse response = new CapabilityUtilisationResponse();
-        if(methodOutcomeAsString == null){
-            response.setResponseContent(methodOutcomeAsString);
+        if(simpleOutcomeAsString != null){
+            response.setResponseContent(simpleOutcomeAsString);
             response.setSuccessful(true);
         } else {
             response.setSuccessful(false);
