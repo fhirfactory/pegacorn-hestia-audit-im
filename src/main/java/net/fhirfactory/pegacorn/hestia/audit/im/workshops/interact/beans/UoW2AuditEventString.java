@@ -19,41 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.workshops.collect;
+package net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact.beans;
 
-import net.fhirfactory.pegacorn.common.model.componentid.TopologyNodeTypeEnum;
-import net.fhirfactory.pegacorn.workshops.base.Workshop;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.fhirfactory.pegacorn.petasos.model.uow.UoW;
 
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class HestiaAuditIMCollectWorkshop extends Workshop {
-    private static final Logger LOG = LoggerFactory.getLogger(HestiaAuditIMCollectWorkshop.class);
-
-    @Override
-    protected Logger specifyLogger() {
-        return (LOG);
-    }
-
-    @Override
-    protected String specifyWorkshopName() {
-        return ("Collect");
-    }
-
-    @Override
-    protected String specifyWorkshopVersion() {
-        return ("1.0.0");
-    }
-
-    @Override
-    protected TopologyNodeTypeEnum specifyWorkshopType() {
-        return (TopologyNodeTypeEnum.WORKSHOP);
-    }
-
-    @Override
-    protected void invokePostConstructInitialisation() {
-
+public class UoW2AuditEventString {
+    public String extractPayload(UoW uow){
+        String payload = uow.getIngresContent().getPayload();
+        return(payload);
     }
 }

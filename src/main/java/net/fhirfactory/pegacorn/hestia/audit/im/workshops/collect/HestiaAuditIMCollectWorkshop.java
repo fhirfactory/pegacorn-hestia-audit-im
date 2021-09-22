@@ -19,14 +19,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.common;
+package net.fhirfactory.pegacorn.hestia.audit.im.workshops.collect;
+
+import net.fhirfactory.pegacorn.common.model.componentid.TopologyNodeTypeEnum;
+import net.fhirfactory.pegacorn.workshops.base.Workshop;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class HestiaIMNames {
+public class HestiaAuditIMCollectWorkshop extends Workshop {
+    private static final Logger LOG = LoggerFactory.getLogger(HestiaAuditIMCollectWorkshop.class);
 
-    public String getInteractHestiaDMHTTPClientName(){
-        return("hestia-dm-http");
+    @Override
+    protected Logger specifyLogger() {
+        return (LOG);
+    }
+
+    @Override
+    protected String specifyWorkshopName() {
+        return ("Collect");
+    }
+
+    @Override
+    protected String specifyWorkshopVersion() {
+        return ("1.0.0");
+    }
+
+    @Override
+    protected TopologyNodeTypeEnum specifyWorkshopType() {
+        return (TopologyNodeTypeEnum.WORKSHOP);
+    }
+
+    @Override
+    protected void invokePostConstructInitialisation() {
+
     }
 }

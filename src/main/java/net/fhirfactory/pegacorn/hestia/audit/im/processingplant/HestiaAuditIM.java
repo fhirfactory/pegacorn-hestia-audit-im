@@ -19,16 +19,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.workshops.interact.beans;
+package net.fhirfactory.pegacorn.hestia.audit.im.processingplant;
 
-import net.fhirfactory.pegacorn.petasos.model.uow.UoW;
+import net.fhirfactory.pegacorn.internals.PegacornReferenceProperties;
+import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
+import net.fhirfactory.pegacorn.platform.edge.services.InterSubSystemPubSubBroker;
+import net.fhirfactory.pegacorn.processingplant.ProcessingPlant;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-@ApplicationScoped
-public class UoW2AuditEventString {
-    public String extractPayload(UoW uow){
-        String payload = uow.getIngresContent().getPayload();
-        return(payload);
+public abstract class HestiaAuditIM extends ProcessingPlant {
+    private boolean hestiaAuditIMInitialised;
+
+    @Inject
+    private InterSubSystemPubSubBroker pubSubBroker;
+
+    @Inject
+    private FHIRElementTopicFactory fhirElementTopicFactory;
+
+    @Inject
+    private PegacornReferenceProperties pegacornReferenceProperties;
+
+    public HestiaAuditIM(){
+        super();
+        hestiaAuditIMInitialised = false;
     }
+
+
 }

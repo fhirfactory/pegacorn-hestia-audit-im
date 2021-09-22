@@ -19,31 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.processingplant;
+package net.fhirfactory.pegacorn.hestia.audit.im.common;
 
-import net.fhirfactory.pegacorn.internals.PegacornReferenceProperties;
-import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
-import net.fhirfactory.pegacorn.platform.edge.services.InterSubSystemPubSubBroker;
-import net.fhirfactory.pegacorn.processingplant.ProcessingPlant;
+import javax.enterprise.context.ApplicationScoped;
 
-import javax.inject.Inject;
+@ApplicationScoped
+public class HestiaIMNames {
 
-public abstract class HestiaAuditIM extends ProcessingPlant {
-    private boolean hestiaAuditIMInitialised;
-
-    @Inject
-    private InterSubSystemPubSubBroker pubSubBroker;
-
-    @Inject
-    private FHIRElementTopicFactory fhirElementTopicFactory;
-
-    @Inject
-    private PegacornReferenceProperties pegacornReferenceProperties;
-
-    public HestiaAuditIM(){
-        super();
-        hestiaAuditIMInitialised = false;
+    public String getInteractHestiaDMHTTPClientName(){
+        return("hestia-dm-http");
     }
-
-
 }
