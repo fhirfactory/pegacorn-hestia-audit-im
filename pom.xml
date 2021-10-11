@@ -243,6 +243,18 @@
         </dependency>
 
         <!--*******************************************************************************-->
+        <!-- Pegacorn (Petasos IT-Ops) Libraries                                           -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-platform-petasos-itops</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--*******************************************************************************-->
         <!-- Pegacorn (FHIR) Libraries                                                     -->
         <!--*******************************************************************************-->
 

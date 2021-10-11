@@ -19,10 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.workshops.interact.beans;
+package net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact.beans;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.gclient.ICreate;
 import net.fhirfactory.pegacorn.common.model.componentid.TopologyNodeFDN;
 import net.fhirfactory.pegacorn.components.interfaces.topology.ProcessingPlantInterface;
 import net.fhirfactory.pegacorn.deployment.topology.manager.TopologyIM;
@@ -30,8 +29,8 @@ import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.base.Externa
 import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.base.IPCTopologyEndpoint;
 import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.interact.StandardInteractClientTopologyEndpointPort;
 import net.fhirfactory.pegacorn.deployment.topology.model.nodes.external.ConnectedExternalSystemTopologyNode;
-import net.fhirfactory.pegacorn.hestia.im.common.HestiaIMNames;
-import net.fhirfactory.pegacorn.hestia.im.processingplant.configuration.HestiaAuditIMTopologyFactory;
+import net.fhirfactory.pegacorn.hestia.audit.im.processingplant.configuration.HestiaAuditIMTopologyFactory;
+import net.fhirfactory.pegacorn.hestia.audit.im.common.HestiaIMNames;
 import net.fhirfactory.pegacorn.internals.PegacornReferenceProperties;
 import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpoint;
 import net.fhirfactory.pegacorn.platform.edge.ask.http.InternalFHIRClientProxy;
