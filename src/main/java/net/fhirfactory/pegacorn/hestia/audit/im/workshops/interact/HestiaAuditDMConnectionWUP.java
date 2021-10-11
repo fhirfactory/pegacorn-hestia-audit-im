@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.workshops.interact;
+package net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,9 +36,9 @@ import net.fhirfactory.pegacorn.components.transaction.valuesets.TransactionType
 import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.base.ExternalSystemIPCEndpoint;
 import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.interact.StandardInteractClientTopologyEndpointPort;
 import net.fhirfactory.pegacorn.deployment.topology.model.nodes.external.ConnectedExternalSystemTopologyNode;
-import net.fhirfactory.pegacorn.hestia.im.workshops.interact.beans.HestiaDMHTTPClient;
-import net.fhirfactory.pegacorn.hestia.im.workshops.interact.beans.MethodOutcome2UoW;
-import net.fhirfactory.pegacorn.hestia.im.workshops.interact.beans.UoW2AuditEventString;
+import net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact.beans.HestiaDMHTTPClient;
+import net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact.beans.MethodOutcome2UoW;
+import net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact.beans.UoW2AuditEventString;
 import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
 import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpoint;
 import net.fhirfactory.pegacorn.workshops.InteractWorkshop;
