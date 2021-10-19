@@ -31,7 +31,8 @@ import net.fhirfactory.pegacorn.components.dataparcel.valuesets.DataParcelNormal
 import net.fhirfactory.pegacorn.components.dataparcel.valuesets.DataParcelValidationStatusEnum;
 import net.fhirfactory.pegacorn.components.dataparcel.valuesets.PolicyEnforcementPointApprovalStatusEnum;
 import net.fhirfactory.pegacorn.petasos.model.configuration.PetasosPropertyConstants;
-import net.fhirfactory.pegacorn.petasos.model.task.PetasosTaskOld;
+
+import net.fhirfactory.pegacorn.petasos.model.pathway.WorkUnitTransportPacket;
 import net.fhirfactory.pegacorn.petasos.model.uow.UoW;
 import net.fhirfactory.pegacorn.petasos.model.uow.UoWPayload;
 import net.fhirfactory.pegacorn.petasos.model.uow.UoWProcessingOutcomeEnum;
@@ -56,8 +57,7 @@ public class MethodOutcome2UoW {
     public UoW encapsulateMethodOutcomeIntoUoW(MethodOutcome outcome, Exchange camelExchange){
         LOG.debug(".encapsulateMethodOutcomeIntoUoW(): Entry");
 
-        PetasosTaskOld wupTransportPacket = camelExchange.getProperty(PetasosPropertyConstants.WUP_TRANSPORT_PACKET_EXCHANGE_PROPERTY_NAME, PetasosTaskOld.class);
-        UoW uowFromExchange = wupTransportPacket.getPayload();
+        UoW uowFromExchange = camelExchange.getProperty(PetasosPropertyConstants.WUP_CURRENT_UOW_EXCHANGE_PROPERTY_NAME, UoW.class);
 
         String outcomeAsString = null;
         String failureString = null;

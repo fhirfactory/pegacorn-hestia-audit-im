@@ -28,7 +28,7 @@ import net.fhirfactory.pegacorn.components.capabilities.CapabilityFulfillmentInt
 import net.fhirfactory.pegacorn.components.capabilities.base.CapabilityUtilisationRequest;
 import net.fhirfactory.pegacorn.components.capabilities.base.CapabilityUtilisationResponse;
 import net.fhirfactory.pegacorn.components.dataparcel.DataParcelManifest;
-import net.fhirfactory.pegacorn.components.interfaces.topology.WorkshopInterface;
+import net.fhirfactory.pegacorn.components.topology.interfaces.WorkshopInterface;
 import net.fhirfactory.pegacorn.components.transaction.model.SimpleResourceID;
 import net.fhirfactory.pegacorn.components.transaction.model.SimpleTransactionOutcome;
 import net.fhirfactory.pegacorn.components.transaction.valuesets.TransactionStatusEnum;
