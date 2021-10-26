@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact;
+package net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,12 +36,11 @@ import net.fhirfactory.pegacorn.components.transaction.valuesets.TransactionType
 import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.base.ExternalSystemIPCEndpoint;
 import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.interact.StandardInteractClientTopologyEndpointPort;
 import net.fhirfactory.pegacorn.deployment.topology.model.nodes.external.ConnectedExternalSystemTopologyNode;
-import net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact.beans.HestiaDMHTTPClient;
-import net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact.beans.MethodOutcome2UoW;
-import net.fhirfactory.pegacorn.hestia.audit.im.workshops.interact.beans.UoW2AuditEventString;
+import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans.HestiaDMHTTPClient;
+import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans.MethodOutcome2UoW;
+import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans.UoW2AuditEventString;
 import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
 import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpoint;
-import net.fhirfactory.pegacorn.workshops.InteractWorkshop;
 import net.fhirfactory.pegacorn.wups.archetypes.petasosenabled.messageprocessingbased.InteractEgressMessagingGatewayWUP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,25 +50,30 @@ import javax.inject.Inject;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.ask.beans.HestiaDMJGroupsClient;
+import net.fhirfactory.pegacorn.workshops.EdgeWorkshop;
 
 @ApplicationScoped
-public class HestiaAuditDMConnectionWUP extends InteractEgressMessagingGatewayWUP implements CapabilityFulfillmentInterface {
-    private static final Logger LOG = LoggerFactory.getLogger(HestiaAuditDMConnectionWUP.class);
+public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWUP implements CapabilityFulfillmentInterface {
+    private static final Logger LOG = LoggerFactory.getLogger(AuditEventAnswerServiceWUP.class);
 
     private static String WUP_VERSION="1.0.0";
     private String CAMEL_COMPONENT_TYPE="netty-http";
     private ObjectMapper jsonMapper;
 
-    public HestiaAuditDMConnectionWUP(){
+    public AuditEventAnswerServiceWUP(){
         super();
         jsonMapper = new ObjectMapper();
     }
 
     @Inject
-    private InteractWorkshop workshop;
+    private EdgeWorkshop workshop;
 
     @Inject
-    private HestiaDMHTTPClient hestiaDM;
+    private HestiaDMHTTPClient hestiaDMHTTPClient;
+    
+    @Inject
+    private HestiaDMJGroupsClient hestiaDMJGroupsClient;
 
     @Inject
     private UoW2AuditEventString uowPayloadExtractor;
@@ -118,7 +122,7 @@ public class HestiaAuditDMConnectionWUP extends InteractEgressMessagingGatewayWU
                 .to(egressFeed());
 
         from(getHestiaAuditDMAccessorPathEntry())
-                .bean(hestiaDM, "writeAuditEvent");
+                .bean(hestiaDMHTTPClient, "writeAuditEvent");
     }
 
     private String getHestiaAuditDMAccessorPathEntry(){
@@ -161,10 +165,28 @@ public class HestiaAuditDMConnectionWUP extends InteractEgressMessagingGatewayWU
         }
         return(false);
     }
+    
+    private boolean useHadoopDMService(){
+        String parameterValue = getProcessingPlant().getProcessingPlantNode().getOtherConfigurationParameter("IM_TO_DM_TECHNOLOGY");
+        if(parameterValue != null){
+            if(parameterValue.equalsIgnoreCase("jgroups")){
+                return(true);
+            }
+        } else {
+            return(false);
+        }
+        return(false);
+    }
 
     private CapabilityUtilisationResponse executeWriteAuditEventTask(CapabilityUtilisationRequest request){
         String auditEventAsString = request.getRequestContent();
-        MethodOutcome methodOutcome = hestiaDM.writeAuditEvent(auditEventAsString);
+        MethodOutcome methodOutcome = null;
+        if(useHadoopDMService()){
+            methodOutcome = hestiaDMJGroupsClient.writeAuditEventIntoDM(auditEventAsString);
+            
+        } else {
+            methodOutcome = hestiaDMHTTPClient.writeAuditEvent(auditEventAsString);
+        }
         String simpleOutcomeAsString = null;
         SimpleTransactionOutcome simpleOutcome = new SimpleTransactionOutcome();
         SimpleResourceID resourceID = new SimpleResourceID();
