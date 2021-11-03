@@ -24,23 +24,25 @@ package net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.fhirfactory.pegacorn.components.capabilities.CapabilityFulfillmentInterface;
-import net.fhirfactory.pegacorn.components.capabilities.base.CapabilityUtilisationRequest;
-import net.fhirfactory.pegacorn.components.capabilities.base.CapabilityUtilisationResponse;
-import net.fhirfactory.pegacorn.components.dataparcel.DataParcelManifest;
-import net.fhirfactory.pegacorn.components.interfaces.topology.WorkshopInterface;
-import net.fhirfactory.pegacorn.components.transaction.model.SimpleResourceID;
-import net.fhirfactory.pegacorn.components.transaction.model.SimpleTransactionOutcome;
-import net.fhirfactory.pegacorn.components.transaction.valuesets.TransactionStatusEnum;
-import net.fhirfactory.pegacorn.components.transaction.valuesets.TransactionTypeEnum;
-import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.base.ExternalSystemIPCEndpoint;
-import net.fhirfactory.pegacorn.deployment.topology.model.endpoints.interact.StandardInteractClientTopologyEndpointPort;
-import net.fhirfactory.pegacorn.deployment.topology.model.nodes.external.ConnectedExternalSystemTopologyNode;
+import net.fhirfactory.pegacorn.core.interfaces.topology.WorkshopInterface;
+import net.fhirfactory.pegacorn.core.model.capabilities.CapabilityFulfillmentInterface;
+import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationRequest;
+import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationResponse;
+import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
+import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.ExternalSystemIPCEndpoint;
+import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.StandardInteractClientTopologyEndpointPort;
+import net.fhirfactory.pegacorn.core.model.topology.nodes.external.ConnectedExternalSystemTopologyNode;
+import net.fhirfactory.pegacorn.core.model.transaction.model.PegacornTransactionOutcome;
+import net.fhirfactory.pegacorn.core.model.transaction.model.SimpleResourceID;
+import net.fhirfactory.pegacorn.core.model.transaction.valuesets.PegacornTransactionStatusEnum;
+import net.fhirfactory.pegacorn.core.model.transaction.valuesets.PegacornTransactionTypeEnum;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans.HestiaDMHTTPClient;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans.MethodOutcome2UoW;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans.UoW2AuditEventString;
+import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.ask.beans.HestiaDMJGroupsClient;
 import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
 import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpoint;
+import net.fhirfactory.pegacorn.workshops.EdgeWorkshop;
 import net.fhirfactory.pegacorn.wups.archetypes.petasosenabled.messageprocessingbased.InteractEgressMessagingGatewayWUP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +52,6 @@ import javax.inject.Inject;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
-import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.ask.beans.HestiaDMJGroupsClient;
-import net.fhirfactory.pegacorn.workshops.EdgeWorkshop;
 
 @ApplicationScoped
 public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWUP implements CapabilityFulfillmentInterface {
@@ -179,7 +179,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
     }
 
     private CapabilityUtilisationResponse executeWriteAuditEventTask(CapabilityUtilisationRequest request){
-        String auditEventAsString = request.getRequestContent();
+        String auditEventAsString = request.getRequestStringContent();
         MethodOutcome methodOutcome = null;
         if(useHadoopDMService()){
             methodOutcome = hestiaDMJGroupsClient.writeAuditEventIntoDM(auditEventAsString);
@@ -188,7 +188,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
             methodOutcome = hestiaDMHTTPClient.writeAuditEvent(auditEventAsString);
         }
         String simpleOutcomeAsString = null;
-        SimpleTransactionOutcome simpleOutcome = new SimpleTransactionOutcome();
+        PegacornTransactionOutcome simpleOutcome = new PegacornTransactionOutcome();
         SimpleResourceID resourceID = new SimpleResourceID();
         if(methodOutcome.getCreated()) {
             if(methodOutcome.getId() != null) {
@@ -205,11 +205,11 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
                 }
                 simpleOutcome.setResourceID(resourceID);
             }
-            simpleOutcome.setTransactionStatus(TransactionStatusEnum.CREATION_FINISH);
+            simpleOutcome.setTransactionStatus(PegacornTransactionStatusEnum.CREATION_FINISH);
         } else {
-            simpleOutcome.setTransactionStatus(TransactionStatusEnum.CREATION_FAILURE);
+            simpleOutcome.setTransactionStatus(PegacornTransactionStatusEnum.CREATION_FAILURE);
         }
-        simpleOutcome.setTransactionType(TransactionTypeEnum.CREATE);
+        simpleOutcome.setTransactionType(PegacornTransactionTypeEnum.CREATE);
         simpleOutcome.setTransactionSuccessful(methodOutcome.getCreated());
         try {
             simpleOutcomeAsString = jsonMapper.writeValueAsString(simpleOutcome);
@@ -229,17 +229,17 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
     }
 
     private CapabilityUtilisationResponse executeFauxWriteAuditEventTask(CapabilityUtilisationRequest request){
-        getLogger().info(request.getRequestContent());
+        getLogger().info(request.getRequestStringContent());
         CapabilityUtilisationResponse response = new CapabilityUtilisationResponse();
         String simpleOutcomeAsAString = null;
-        SimpleTransactionOutcome fauxOutcome = new SimpleTransactionOutcome();
+        PegacornTransactionOutcome fauxOutcome = new PegacornTransactionOutcome();
         SimpleResourceID resourceID = new SimpleResourceID();
         resourceID.setResourceType("AuditEvent");
         resourceID.setValue(UUID.randomUUID().toString());
         resourceID.setVersion(SimpleResourceID.DEFAULT_VERSION);
         fauxOutcome.setResourceID(resourceID);
-        fauxOutcome.setTransactionStatus(TransactionStatusEnum.CREATION_FINISH);
-        fauxOutcome.setTransactionType(TransactionTypeEnum.CREATE);
+        fauxOutcome.setTransactionStatus(PegacornTransactionStatusEnum.CREATION_FINISH);
+        fauxOutcome.setTransactionType(PegacornTransactionTypeEnum.CREATE);
         fauxOutcome.setTransactionSuccessful(true);
         try {
             simpleOutcomeAsAString = jsonMapper.writeValueAsString(fauxOutcome);
@@ -267,7 +267,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
         MessageBasedWUPEndpoint endpoint = new MessageBasedWUPEndpoint();
         StandardInteractClientTopologyEndpointPort clientTopologyEndpoint = (StandardInteractClientTopologyEndpointPort) getTopologyEndpoint(specifyEgressTopologyEndpointName());
         ConnectedExternalSystemTopologyNode targetSystem = clientTopologyEndpoint.getTargetSystem();
-        ExternalSystemIPCEndpoint externalSystemIPCEndpoint = targetSystem.getTargetPorts().get(0);
+        ExternalSystemIPCEndpoint externalSystemIPCEndpoint = (ExternalSystemIPCEndpoint)targetSystem.getTargetPorts().get(0);
         int portValue = externalSystemIPCEndpoint.getTargetPortValue();
         String targetInterfaceDNSName = externalSystemIPCEndpoint.getTargetPortDNSName();
         String httpType = null;

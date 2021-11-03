@@ -27,36 +27,31 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import net.fhirfactory.pegacorn.components.capabilities.base.CapabilityUtilisationRequest;
-import net.fhirfactory.pegacorn.components.capabilities.base.CapabilityUtilisationResponse;
-import net.fhirfactory.pegacorn.components.dataparcel.DataParcelManifest;
-import net.fhirfactory.pegacorn.components.interfaces.topology.ProcessingPlantInterface;
-import net.fhirfactory.pegacorn.components.interfaces.topology.WorkshopInterface;
-import net.fhirfactory.pegacorn.components.transaction.model.SimpleResourceID;
-import net.fhirfactory.pegacorn.components.transaction.model.SimpleTransactionOutcome;
-import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.ask.AuditEventAskServiceWUP;
+import net.fhirfactory.pegacorn.core.interfaces.topology.ProcessingPlantInterface;
+import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationRequest;
+import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationResponse;
+import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
+import net.fhirfactory.pegacorn.core.model.petasos.uow.UoW;
+import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWPayload;
+import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWProcessingOutcomeEnum;
+import net.fhirfactory.pegacorn.core.model.transaction.model.PegacornTransactionOutcome;
+import net.fhirfactory.pegacorn.core.model.transaction.model.SimpleResourceID;
 import net.fhirfactory.pegacorn.petasos.endpoints.CapabilityUtilisationBroker;
-import net.fhirfactory.pegacorn.petasos.model.uow.UoW;
-import net.fhirfactory.pegacorn.petasos.model.uow.UoWPayload;
-import net.fhirfactory.pegacorn.petasos.model.uow.UoWProcessingOutcomeEnum;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
-import net.fhirfactory.pegacorn.wups.archetypes.petasosenabled.messageprocessingbased.MOAStandardWUP;
 import org.apache.camel.Exchange;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.plexus.util.ExceptionUtils;
-import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hl7.fhir.r4.model.AuditEvent;
 import org.hl7.fhir.r4.model.IdType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.time.Instant;
+import java.util.UUID;
 
 /**
  *
@@ -135,9 +130,9 @@ public class HestiaDMJGroupsClient {
         try {
             outcomeAsString = getJSONMapper().writeValueAsString(outcome);
         } catch (JsonProcessingException ex) {
-            getLogger().warn(".persistAuditEvent(): Cannot convert outcome to String, exception->{}", ExceptionUtils.getFullStackTrace(ex));
+            getLogger().warn(".persistAuditEvent(): Cannot convert outcome to String, exception->{}", ExceptionUtils.getStackTrace(ex));
             uow.setProcessingOutcome(UoWProcessingOutcomeEnum.UOW_OUTCOME_FAILED);
-            uow.setFailureDescription(ExceptionUtils.getFullStackTrace(ex));
+            uow.setFailureDescription(ExceptionUtils.getStackTrace(ex));
             return(uow);
         }
         UoWPayload egressPayload = new UoWPayload();
@@ -176,7 +171,7 @@ public class HestiaDMJGroupsClient {
         //
         // Extract the response
         //
-        String resultString = auditEventWriteOutcome.getResponseContent();
+        String resultString = auditEventWriteOutcome.getResponseStringContent();
         MethodOutcome methodOutcome = convertToMethodOutcome(resultString);
         getLogger().debug(".utiliseAuditEventPersistenceCapability(): Entry, methodOutcome --> {}", methodOutcome);
         return(methodOutcome);
@@ -193,9 +188,9 @@ public class HestiaDMJGroupsClient {
             outcome.setCreated(false);
             return(outcome);
         }
-        SimpleTransactionOutcome transactionOutcome = null;
+        PegacornTransactionOutcome transactionOutcome = null;
         try {
-            transactionOutcome = getJSONMapper().readValue(methodOutcomeString, SimpleTransactionOutcome.class);
+            transactionOutcome = getJSONMapper().readValue(methodOutcomeString, PegacornTransactionOutcome.class);
         } catch (JsonProcessingException e) {
             getLogger().error(".convertToMethodOutcome(): Cannot parse MethodOutcome object! ", e);
         }

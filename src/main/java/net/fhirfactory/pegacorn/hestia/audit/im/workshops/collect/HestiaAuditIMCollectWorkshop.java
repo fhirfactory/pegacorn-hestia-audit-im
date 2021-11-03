@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.hestia.audit.im.workshops.collect;
 
-import net.fhirfactory.pegacorn.common.model.componentid.TopologyNodeTypeEnum;
+import net.fhirfactory.pegacorn.core.model.componentid.ComponentTypeTypeEnum;
 import net.fhirfactory.pegacorn.workshops.base.Workshop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +48,8 @@ public class HestiaAuditIMCollectWorkshop extends Workshop {
     }
 
     @Override
-    protected TopologyNodeTypeEnum specifyWorkshopType() {
-        return (TopologyNodeTypeEnum.WORKSHOP);
+    protected ComponentTypeTypeEnum specifyWorkshopType() {
+        return (ComponentTypeTypeEnum.WORKSHOP);
     }
 
     @Override

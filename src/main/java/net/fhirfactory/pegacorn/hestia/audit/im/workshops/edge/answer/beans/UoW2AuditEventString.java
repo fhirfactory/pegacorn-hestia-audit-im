@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans;
 
-import net.fhirfactory.pegacorn.petasos.model.uow.UoW;
+import net.fhirfactory.pegacorn.core.model.petasos.uow.UoW;
 
 import javax.enterprise.context.ApplicationScoped;
 
