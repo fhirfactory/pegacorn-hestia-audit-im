@@ -106,7 +106,7 @@ public class AuditEventAskServiceWUP extends MOAStandardWUP{
         manifest.setSourceSystem("aether-hestia-audit-im");
         manifest.setIntendedTargetSystem("aether-hestia-audit-dm");
         manifest.setEnforcementPointApprovalStatus(PolicyEnforcementPointApprovalStatusEnum.POLICY_ENFORCEMENT_POINT_APPROVAL_ANY);
-        manifest.setDataParcelFlowDirection(DataParcelDirectionEnum.INBOUND_DATA_PARCEL);
+        manifest.setDataParcelFlowDirection(DataParcelDirectionEnum.INFORMATION_FLOW_INBOUND_DATA_PARCEL);
 
         subscribedTopics.add(manifest);
         return(subscribedTopics);
@@ -127,7 +127,11 @@ public class AuditEventAskServiceWUP extends MOAStandardWUP{
         return(workshop);
     }
 
-        
+    @Override
+    protected List<DataParcelManifest> declarePublishedTopics() {
+        return (new ArrayList<>());
+    }
+
     //
     // Getters (and Setters)
     //

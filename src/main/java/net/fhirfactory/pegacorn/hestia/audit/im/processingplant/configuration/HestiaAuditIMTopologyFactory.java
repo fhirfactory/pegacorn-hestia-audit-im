@@ -33,26 +33,25 @@ public class HestiaAuditIMTopologyFactory extends FHIRIMSubsystemTopologyFactory
     }
 
     @Override
-    protected ProcessingPlantTopologyNode buildSubsystemTopology() {
+    protected ProcessingPlantSoftwareComponent buildSubsystemTopology() {
         SubsystemTopologyNode subsystemTopologyNode = addSubsystemNode(getTopologyIM().getSolutionTopology());
         BusinessServiceTopologyNode businessServiceTopologyNode = addBusinessServiceNode(subsystemTopologyNode);
         DeploymentSiteTopologyNode deploymentSiteTopologyNode = addDeploymentSiteNode(businessServiceTopologyNode);
         ClusterServiceTopologyNode clusterServiceTopologyNode = addClusterServiceNode(deploymentSiteTopologyNode);
 
         PlatformTopologyNode platformTopologyNode = addPlatformNode(clusterServiceTopologyNode);
-        ProcessingPlantTopologyNode processingPlantTopologyNode = addPegacornProcessingPlant(platformTopologyNode);
-        addPrometheusPort(processingPlantTopologyNode);
-        addJolokiaPort(processingPlantTopologyNode);
-        addKubeLivelinessPort(processingPlantTopologyNode);
-        addKubeReadinessPort(processingPlantTopologyNode);
-        addEdgeAnswerPort(processingPlantTopologyNode);
-        addIntraZoneIPCJGroupsPort(processingPlantTopologyNode);
-        addInterZoneIPCJGroupsPort(processingPlantTopologyNode);
+        ProcessingPlantSoftwareComponent processingPlantSoftwareComponent = addPegacornProcessingPlant(platformTopologyNode);
+        addPrometheusPort(processingPlantSoftwareComponent);
+        addJolokiaPort(processingPlantSoftwareComponent);
+        addKubeLivelinessPort(processingPlantSoftwareComponent);
+        addKubeReadinessPort(processingPlantSoftwareComponent);
+        addEdgeAnswerPort(processingPlantSoftwareComponent);
+        addAllJGroupsEndpoints(processingPlantSoftwareComponent);
 
         // Unique to HestiaIM
         getLogger().trace(".buildSubsystemTopology(): Add the httpFHIRClient port to the ProcessingPlant Topology Node");
-        addHTTPClientPorts(processingPlantTopologyNode);
-        return(processingPlantTopologyNode);
+        addHTTPClientPorts(processingPlantSoftwareComponent);
+        return(processingPlantSoftwareComponent);
     }
 
     protected void addHTTPClientPorts( EndpointProviderInterface endpointProvider) {

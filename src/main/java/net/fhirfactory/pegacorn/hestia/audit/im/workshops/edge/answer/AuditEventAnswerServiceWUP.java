@@ -24,14 +24,18 @@ package net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceClientWriterInterface;
+import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceHandlerInterface;
 import net.fhirfactory.pegacorn.core.interfaces.topology.WorkshopInterface;
 import net.fhirfactory.pegacorn.core.model.capabilities.CapabilityFulfillmentInterface;
 import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationRequest;
 import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationResponse;
 import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
+import net.fhirfactory.pegacorn.core.model.topology.endpoints.edge.petasos.PetasosEndpointIdentifier;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.ExternalSystemIPCEndpoint;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.StandardInteractClientTopologyEndpointPort;
 import net.fhirfactory.pegacorn.core.model.topology.nodes.external.ConnectedExternalSystemTopologyNode;
+import net.fhirfactory.pegacorn.core.model.transaction.model.PegacornTransactionMethodOutcome;
 import net.fhirfactory.pegacorn.core.model.transaction.model.PegacornTransactionOutcome;
 import net.fhirfactory.pegacorn.core.model.transaction.model.SimpleResourceID;
 import net.fhirfactory.pegacorn.core.model.transaction.valuesets.PegacornTransactionStatusEnum;
@@ -44,17 +48,19 @@ import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTop
 import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpoint;
 import net.fhirfactory.pegacorn.workshops.EdgeWorkshop;
 import net.fhirfactory.pegacorn.wups.archetypes.petasosenabled.messageprocessingbased.InteractEgressMessagingGatewayWUP;
+import org.hl7.fhir.r4.model.AuditEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
-public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWUP implements CapabilityFulfillmentInterface {
+public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWUP implements CapabilityFulfillmentInterface, PetasosAuditEventServiceHandlerInterface, PetasosAuditEventServiceClientWriterInterface {
     private static final Logger LOG = LoggerFactory.getLogger(AuditEventAnswerServiceWUP.class);
 
     private static String WUP_VERSION="1.0.0";
@@ -146,7 +152,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
             }
             default:{
                 CapabilityUtilisationResponse response = new CapabilityUtilisationResponse();
-                response.setDateCompleted(Instant.now());
+                response.setInstantCompleted(Instant.now());
                 response.setSuccessful(false);
                 response.setAssociatedRequestID(request.getRequestID());
                 return(response);
@@ -223,7 +229,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
         } else {
             response.setSuccessful(false);
         }
-        response.setDateCompleted(Instant.now());
+        response.setInstantCompleted(Instant.now());
         response.setAssociatedRequestID(request.getRequestID());
         return(response);
     }
@@ -252,10 +258,53 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
         } else {
             response.setSuccessful(false);
         }
-        response.setDateCompleted(Instant.now());
+        response.setInstantCompleted(Instant.now());
         response.setAssociatedRequestID(request.getRequestID());
         return(response);
     }
+
+    //
+    // Audit Event Handler Interface
+    //
+
+    @Override
+    public PegacornTransactionMethodOutcome logAuditEvent(AuditEvent event, PetasosEndpointIdentifier endpointIdentifier) {
+        MethodOutcome methodOutcome = hestiaDMHTTPClient.writeAuditEvent(event);
+        PegacornTransactionMethodOutcome outcome = new PegacornTransactionMethodOutcome(PegacornTransactionTypeEnum.CREATE, PegacornTransactionStatusEnum.CREATION_FINISH, methodOutcome);
+        return (outcome);
+    }
+
+    @Override
+    public PegacornTransactionMethodOutcome logAuditEvent(List<AuditEvent> eventList, PetasosEndpointIdentifier endpointIdentifier) {
+        PegacornTransactionMethodOutcome lastOutcome = null;
+        for(AuditEvent currentAuditEvent: eventList) {
+            MethodOutcome methodOutcome = hestiaDMHTTPClient.writeAuditEvent(currentAuditEvent);
+            PegacornTransactionMethodOutcome outcome = new PegacornTransactionMethodOutcome(PegacornTransactionTypeEnum.CREATE, PegacornTransactionStatusEnum.CREATION_FINISH, methodOutcome);
+            lastOutcome = outcome;
+            if(!outcome.getCreated()){
+                break;
+            }
+        }
+        return(lastOutcome);
+    }
+
+    //
+    // Audit Event Writer Interface
+    //
+
+    @Override
+    public AuditEvent logAuditEventAsynchronously(AuditEvent auditEvent) {
+        return auditEvent;
+    }
+
+    @Override
+    public AuditEvent logAuditEventSynchronously(AuditEvent auditEvent) {
+        return auditEvent;
+    }
+
+    //
+    // Framework Methods
+    //
 
     @Override
     protected String specifyEgressTopologyEndpointName() {
@@ -285,5 +334,10 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
     @Override
     protected void registerCapabilities(){
         getProcessingPlant().registerCapabilityFulfillmentService("FHIR-AuditEvent-Persistence", this);
+    }
+
+    @Override
+    protected List<DataParcelManifest> declarePublishedTopics() {
+        return (new ArrayList<>());
     }
 }

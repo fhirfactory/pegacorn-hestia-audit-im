@@ -33,7 +33,7 @@ import net.fhirfactory.pegacorn.deployment.topology.manager.TopologyIM;
 import net.fhirfactory.pegacorn.hestia.audit.im.common.HestiaIMNames;
 import net.fhirfactory.pegacorn.hestia.audit.im.processingplant.configuration.HestiaAuditIMTopologyFactory;
 import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpoint;
-import net.fhirfactory.pegacorn.platform.edge.ask.http.InternalFHIRClientProxy;
+import net.fhirfactory.pegacorn.platform.edge.ask.base.http.InternalFHIRClientProxy;
 import org.hl7.fhir.r4.model.AuditEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +100,7 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
         ArrayList<TopologyNodeFDN> endpointFDNs = processingPlant.getProcessingPlantNode().getEndpoints();
         for(TopologyNodeFDN currentEndpointFDN: endpointFDNs){
             IPCTopologyEndpoint endpointTopologyNode = (IPCTopologyEndpoint)topologyIM.getNode(currentEndpointFDN);
-            if(endpointTopologyNode.getName().contentEquals(topologyEndpointName)){
+            if(endpointTopologyNode.getEndpointConfigurationName().contentEquals(topologyEndpointName)){
                 getLogger().debug(".getTopologyEndpoint(): Exit, node found -->{}", endpointTopologyNode);
                 return(endpointTopologyNode);
             }
@@ -116,19 +116,27 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
             getLogger().info(".writeAuditEvent(): Writing to Hestia-Audit-DM");
             // write the event to the Persistence service
             AuditEvent auditEvent = getFHIRContextUtility().getJsonParser().parseResource(AuditEvent.class, auditEventJSONString);
-            try {
-                outcome = getClient().create()
-                        .resource(auditEvent)
-                        .prettyPrint()
-                        .encodedJson()
-                        .execute();
-            } catch (Exception ex){
-                getLogger().error(".writeAuditEvent(): ", ex);
-                outcome = new MethodOutcome();
-                outcome.setCreated(false);
-            }
+            outcome = writeAuditEvent(auditEvent);
         } else {
             getLogger().info(auditEventJSONString);
+        }
+        getLogger().info(".writeAuditEvent(): Exit, outcome->{}", outcome);
+        return(outcome);
+    }
+
+    public MethodOutcome writeAuditEvent(AuditEvent auditEvent){
+        getLogger().debug(".writeAuditEvent(): Entry, auditEvent->{}", auditEvent);
+        MethodOutcome outcome = null;
+        try {
+            outcome = getClient().create()
+                    .resource(auditEvent)
+                    .prettyPrint()
+                    .encodedJson()
+                    .execute();
+        } catch (Exception ex){
+            getLogger().error(".writeAuditEvent(): ", ex);
+            outcome = new MethodOutcome();
+            outcome.setCreated(false);
         }
         getLogger().info(".writeAuditEvent(): Exit, outcome->{}", outcome);
         return(outcome);
@@ -145,5 +153,10 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
             this.resolvedAuditPersistenceValue = true;
         }
         return(this.auditPersistence);
+    }
+
+    @Override
+    protected void postConstructActivities() {
+
     }
 }

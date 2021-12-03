@@ -163,7 +163,7 @@ public class HestiaDMJGroupsClient {
         task.setRequestID(UUID.randomUUID().toString());
         task.setRequestContent(auditEventAsString);
         task.setRequiredCapabilityName("FHIR-AuditEvent-Persistence");
-        task.setRequestDate(Instant.now());
+        task.setRequestInstant(Instant.now());
         //
         // Do Write
         //

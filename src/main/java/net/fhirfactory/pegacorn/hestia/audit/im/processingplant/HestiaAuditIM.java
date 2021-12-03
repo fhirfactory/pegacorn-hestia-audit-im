@@ -23,7 +23,7 @@ package net.fhirfactory.pegacorn.hestia.audit.im.processingplant;
 
 import net.fhirfactory.pegacorn.core.constants.systemwide.PegacornReferenceProperties;
 import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
-import net.fhirfactory.pegacorn.platform.edge.services.InterSubSystemPubSubBroker;
+import net.fhirfactory.pegacorn.platform.edge.services.PetasosSubscriptionService;
 import net.fhirfactory.pegacorn.processingplant.ProcessingPlant;
 
 import javax.inject.Inject;
@@ -32,7 +32,7 @@ public abstract class HestiaAuditIM extends ProcessingPlant {
     private boolean hestiaAuditIMInitialised;
 
     @Inject
-    private InterSubSystemPubSubBroker pubSubBroker;
+    private PetasosSubscriptionService pubSubBroker;
 
     @Inject
     private FHIRElementTopicFactory fhirElementTopicFactory;
