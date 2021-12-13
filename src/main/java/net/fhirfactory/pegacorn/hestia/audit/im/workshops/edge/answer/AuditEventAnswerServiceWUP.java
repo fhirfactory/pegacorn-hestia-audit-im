@@ -235,7 +235,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
     }
 
     private CapabilityUtilisationResponse executeFauxWriteAuditEventTask(CapabilityUtilisationRequest request){
-        getLogger().info(request.getRequestStringContent());
+        getLogger().warn(request.getRequestStringContent());
         CapabilityUtilisationResponse response = new CapabilityUtilisationResponse();
         String simpleOutcomeAsAString = null;
         PegacornTransactionOutcome fauxOutcome = new PegacornTransactionOutcome();
