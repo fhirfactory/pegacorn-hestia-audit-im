@@ -97,7 +97,7 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
 
     protected IPCTopologyEndpoint getTopologyEndpoint(String topologyEndpointName){
         getLogger().debug(".getTopologyEndpoint(): Entry, topologyEndpointName->{}", topologyEndpointName);
-        ArrayList<TopologyNodeFDN> endpointFDNs = processingPlant.getProcessingPlantNode().getEndpoints();
+        ArrayList<TopologyNodeFDN> endpointFDNs = processingPlant.getMeAsASoftwareComponent().getEndpoints();
         for(TopologyNodeFDN currentEndpointFDN: endpointFDNs){
             IPCTopologyEndpoint endpointTopologyNode = (IPCTopologyEndpoint)topologyIM.getNode(currentEndpointFDN);
             if(endpointTopologyNode.getEndpointConfigurationName().contentEquals(topologyEndpointName)){
@@ -144,7 +144,7 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
 
     private boolean persistAuditEvent(){
         if(!this.resolvedAuditPersistenceValue){
-            String auditEventPersistenceValue = processingPlant.getProcessingPlantNode().getOtherConfigurationParameter("AUDIT_EVENT_PERSISTENCE");
+            String auditEventPersistenceValue = processingPlant.getMeAsASoftwareComponent().getOtherConfigurationParameter("AUDIT_EVENT_PERSISTENCE");
             if (auditEventPersistenceValue.equalsIgnoreCase("true")) {
                 this.auditPersistence = true;
             } else {

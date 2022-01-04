@@ -36,7 +36,7 @@ import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWPayload;
 import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWProcessingOutcomeEnum;
 import net.fhirfactory.pegacorn.core.model.transaction.model.PegacornTransactionOutcome;
 import net.fhirfactory.pegacorn.core.model.transaction.model.SimpleResourceID;
-import net.fhirfactory.pegacorn.petasos.endpoints.CapabilityUtilisationBroker;
+import net.fhirfactory.pegacorn.petasos.endpoints.services.tasking.CapabilityUtilisationBroker;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
 import org.apache.camel.Exchange;
 import org.apache.commons.lang3.SerializationUtils;

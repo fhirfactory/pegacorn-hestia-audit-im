@@ -31,7 +31,7 @@ import net.fhirfactory.pegacorn.core.model.capabilities.CapabilityFulfillmentInt
 import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationRequest;
 import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationResponse;
 import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
-import net.fhirfactory.pegacorn.core.model.topology.endpoints.edge.petasos.PetasosEndpointIdentifier;
+import net.fhirfactory.pegacorn.core.model.topology.endpoints.edge.jgroups.JGroupsIntegrationPointSummary;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.ExternalSystemIPCEndpoint;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.StandardInteractClientTopologyEndpointPort;
 import net.fhirfactory.pegacorn.core.model.topology.nodes.external.ConnectedExternalSystemTopologyNode;
@@ -161,7 +161,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
     }
 
     private boolean shouldPersistAuditEvent(){
-        String parameterValue = getProcessingPlant().getProcessingPlantNode().getOtherConfigurationParameter("AUDIT_EVENT_PERSISTENCE");
+        String parameterValue = getProcessingPlant().getMeAsASoftwareComponent().getOtherConfigurationParameter("AUDIT_EVENT_PERSISTENCE");
         if(parameterValue != null){
             if(parameterValue.equalsIgnoreCase("true")){
                 return(true);
@@ -173,7 +173,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
     }
     
     private boolean useHadoopDMService(){
-        String parameterValue = getProcessingPlant().getProcessingPlantNode().getOtherConfigurationParameter("IM_TO_DM_TECHNOLOGY");
+        String parameterValue = getProcessingPlant().getMeAsASoftwareComponent().getOtherConfigurationParameter("IM_TO_DM_TECHNOLOGY");
         if(parameterValue != null){
             if(parameterValue.equalsIgnoreCase("jgroups")){
                 return(true);
@@ -268,14 +268,14 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
     //
 
     @Override
-    public PegacornTransactionMethodOutcome logAuditEvent(AuditEvent event, PetasosEndpointIdentifier endpointIdentifier) {
+    public PegacornTransactionMethodOutcome logAuditEvent(AuditEvent event, JGroupsIntegrationPointSummary integrationPoint) {
         MethodOutcome methodOutcome = hestiaDMHTTPClient.writeAuditEvent(event);
         PegacornTransactionMethodOutcome outcome = new PegacornTransactionMethodOutcome(PegacornTransactionTypeEnum.CREATE, PegacornTransactionStatusEnum.CREATION_FINISH, methodOutcome);
         return (outcome);
     }
 
     @Override
-    public PegacornTransactionMethodOutcome logAuditEvent(List<AuditEvent> eventList, PetasosEndpointIdentifier endpointIdentifier) {
+    public PegacornTransactionMethodOutcome logAuditEvent(List<AuditEvent> eventList, JGroupsIntegrationPointSummary integrationPoint) {
         PegacornTransactionMethodOutcome lastOutcome = null;
         for(AuditEvent currentAuditEvent: eventList) {
             MethodOutcome methodOutcome = hestiaDMHTTPClient.writeAuditEvent(currentAuditEvent);
