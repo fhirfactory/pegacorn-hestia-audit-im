@@ -92,7 +92,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
 
     @Override
     protected List<DataParcelManifest> specifySubscriptionTopics() {
-        return null;
+        return (new ArrayList<>());
     }
 
     @Override
