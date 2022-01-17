@@ -1,7 +1,9 @@
 package net.fhirfactory.pegacorn.hestia.audit.im.processingplant.configuration;
 
 import net.fhirfactory.pegacorn.core.model.topology.nodes.*;
-import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.interact.StandardInteractClientPortSegment;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.http.HTTPClientPortSegment;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.interact.InteractClientPortSegment;
+import net.fhirfactory.pegacorn.deployment.topology.factories.archetypes.base.endpoints.HTTPTopologyEndpointFactory;
 import net.fhirfactory.pegacorn.deployment.topology.factories.archetypes.fhirpersistence.im.FHIRIMSubsystemTopologyFactory;
 import net.fhirfactory.pegacorn.core.model.topology.nodes.common.EndpointProviderInterface;
 import net.fhirfactory.pegacorn.hestia.audit.im.common.HestiaIMNames;
@@ -21,6 +23,9 @@ public class HestiaAuditIMTopologyFactory extends FHIRIMSubsystemTopologyFactory
 
     @Inject
     private PegacornEnvironmentProperties pegacornEnvironmentProperties;
+
+    @Inject
+    private HTTPTopologyEndpointFactory httpTopologyEndpointFactory;
 
     @Override
     protected Logger specifyLogger() {
@@ -58,8 +63,8 @@ public class HestiaAuditIMTopologyFactory extends FHIRIMSubsystemTopologyFactory
         getLogger().debug(".addHTTPClientPorts(): Entry, endpointProvider->{}", endpointProvider);
 
         getLogger().trace(".addHTTPClientPorts(): Creating the HTTP Client (Used to Connect-To Hestia Audit DM)");
-        StandardInteractClientPortSegment interactHTTPClient = ((HestiaAuditIMConfigurationFile) getPropertyFile()).getInteractHestiaDMHTTPClient();
-        newHTTPClient(endpointProvider, hestiaIMNames.getInteractHestiaDMHTTPClientName(),interactHTTPClient );
+        HTTPClientPortSegment interactHTTPClient = ((HestiaAuditIMConfigurationFile) getPropertyFile()).getInteractHestiaDMHTTPClient();
+        httpTopologyEndpointFactory.newHTTPClientTopologyEndpoint(getPropertyFile(), endpointProvider, hestiaIMNames.getInteractHestiaDMHTTPClientName(),interactHTTPClient );
 
         getLogger().debug(".addHTTPClientPorts(): Exit");
     }

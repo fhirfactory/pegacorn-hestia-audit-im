@@ -32,7 +32,7 @@ import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisati
 import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationResponse;
 import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.edge.jgroups.JGroupsIntegrationPointSummary;
-import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.ExternalSystemIPCEndpoint;
+import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.ExternalSystemIPCAdapter;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.StandardInteractClientTopologyEndpointPort;
 import net.fhirfactory.pegacorn.core.model.topology.nodes.external.ConnectedExternalSystemTopologyNode;
 import net.fhirfactory.pegacorn.core.model.transaction.model.PegacornTransactionMethodOutcome;
@@ -45,7 +45,7 @@ import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans.Meth
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans.UoW2AuditEventString;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.ask.beans.HestiaDMJGroupsClient;
 import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
-import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpoint;
+import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpointContainer;
 import net.fhirfactory.pegacorn.workshops.EdgeWorkshop;
 import net.fhirfactory.pegacorn.wups.archetypes.petasosenabled.messageprocessingbased.InteractEgressMessagingGatewayWUP;
 import org.hl7.fhir.r4.model.AuditEvent;
@@ -92,7 +92,7 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
 
     @Override
     protected List<DataParcelManifest> specifySubscriptionTopics() {
-        return null;
+        return (new ArrayList<>());
     }
 
     @Override
@@ -312,15 +312,15 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
     }
 
     @Override
-    protected MessageBasedWUPEndpoint specifyEgressEndpoint() {
-        MessageBasedWUPEndpoint endpoint = new MessageBasedWUPEndpoint();
+    protected MessageBasedWUPEndpointContainer specifyEgressEndpoint() {
+        MessageBasedWUPEndpointContainer endpoint = new MessageBasedWUPEndpointContainer();
         StandardInteractClientTopologyEndpointPort clientTopologyEndpoint = (StandardInteractClientTopologyEndpointPort) getTopologyEndpoint(specifyEgressTopologyEndpointName());
         ConnectedExternalSystemTopologyNode targetSystem = clientTopologyEndpoint.getTargetSystem();
-        ExternalSystemIPCEndpoint externalSystemIPCEndpoint = (ExternalSystemIPCEndpoint)targetSystem.getTargetPorts().get(0);
-        int portValue = externalSystemIPCEndpoint.getTargetPortValue();
-        String targetInterfaceDNSName = externalSystemIPCEndpoint.getTargetPortDNSName();
+        ExternalSystemIPCAdapter externalSystemIPCAdapter = (ExternalSystemIPCAdapter)targetSystem.getTargetPorts().get(0);
+        int portValue = externalSystemIPCAdapter.getTargetPortValue();
+        String targetInterfaceDNSName = externalSystemIPCAdapter.getTargetPortDNSName();
         String httpType = null;
-        if(externalSystemIPCEndpoint.getEncryptionRequired()){
+        if(externalSystemIPCAdapter.getEncryptionRequired()){
             httpType = "https";
         } else {
             httpType = "http";
@@ -339,5 +339,10 @@ public class AuditEventAnswerServiceWUP extends InteractEgressMessagingGatewayWU
     @Override
     protected List<DataParcelManifest> declarePublishedTopics() {
         return (new ArrayList<>());
+    }
+
+    @Override
+    protected String specifyEndpointParticipantName() {
+        return ("FHIR-RESTfulAPI-Server");
     }
 }

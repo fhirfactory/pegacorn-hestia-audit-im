@@ -26,13 +26,13 @@ import net.fhirfactory.pegacorn.core.constants.systemwide.PegacornReferencePrope
 import net.fhirfactory.pegacorn.core.interfaces.topology.ProcessingPlantInterface;
 import net.fhirfactory.pegacorn.core.model.componentid.TopologyNodeFDN;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.base.IPCTopologyEndpoint;
-import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.ExternalSystemIPCEndpoint;
+import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.ExternalSystemIPCAdapter;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.StandardInteractClientTopologyEndpointPort;
 import net.fhirfactory.pegacorn.core.model.topology.nodes.external.ConnectedExternalSystemTopologyNode;
 import net.fhirfactory.pegacorn.deployment.topology.manager.TopologyIM;
 import net.fhirfactory.pegacorn.hestia.audit.im.common.HestiaIMNames;
 import net.fhirfactory.pegacorn.hestia.audit.im.processingplant.configuration.HestiaAuditIMTopologyFactory;
-import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpoint;
+import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpointContainer;
 import net.fhirfactory.pegacorn.platform.edge.ask.base.http.InternalFHIRClientProxy;
 import org.hl7.fhir.r4.model.AuditEvent;
 import org.slf4j.Logger;
@@ -78,20 +78,20 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
     @Override
     protected String deriveTargetEndpointDetails(){
         getLogger().debug(".deriveTargetEndpointDetails(): Entry");
-        MessageBasedWUPEndpoint endpoint = new MessageBasedWUPEndpoint();
+        MessageBasedWUPEndpointContainer endpoint = new MessageBasedWUPEndpointContainer();
         StandardInteractClientTopologyEndpointPort clientTopologyEndpoint = (StandardInteractClientTopologyEndpointPort) getTopologyEndpoint(hestiaIMNames.getInteractHestiaDMHTTPClientName());
         ConnectedExternalSystemTopologyNode targetSystem = clientTopologyEndpoint.getTargetSystem();
-        ExternalSystemIPCEndpoint externalSystemIPCEndpoint = (ExternalSystemIPCEndpoint) targetSystem.getTargetPorts().get(0);
+        ExternalSystemIPCAdapter externalSystemIPCAdapter = (ExternalSystemIPCAdapter) targetSystem.getTargetPorts().get(0);
         String http_type = null;
-        if(externalSystemIPCEndpoint.getEncryptionRequired()) {
+        if(externalSystemIPCAdapter.getEncryptionRequired()) {
             http_type = "https";
         } else {
             http_type = "http";
         }
-        String dnsName = externalSystemIPCEndpoint.getTargetPortDNSName();
-        String portNumber = Integer.toString(externalSystemIPCEndpoint.getTargetPortValue());
+        String dnsName = externalSystemIPCAdapter.getTargetPortDNSName();
+        String portNumber = Integer.toString(externalSystemIPCAdapter.getTargetPortValue());
         String endpointDetails = http_type + "://" + dnsName + ":" + portNumber + systemWideProperties.getPegacornInternalFhirResourceR4Path();
-        getLogger().info(".deriveTargetEndpointDetails(): Exit, endpointDetails --> {}", endpointDetails);
+        getLogger().debug(".deriveTargetEndpointDetails(): Exit, endpointDetails --> {}", endpointDetails);
         return(endpointDetails);
     }
 

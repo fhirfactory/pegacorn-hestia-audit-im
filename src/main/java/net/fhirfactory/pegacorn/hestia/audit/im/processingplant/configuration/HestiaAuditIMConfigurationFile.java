@@ -22,23 +22,37 @@
 package net.fhirfactory.pegacorn.hestia.audit.im.processingplant.configuration;
 
 import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.archetypes.PetasosEnabledSubsystemPropertyFile;
-import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.interact.StandardInteractClientPortSegment;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.http.HTTPClientPortSegment;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.interact.InteractClientPortSegment;
 
 public class HestiaAuditIMConfigurationFile extends PetasosEnabledSubsystemPropertyFile {
 
-    private StandardInteractClientPortSegment interactHestiaDMHTTPClient;
+    private HTTPClientPortSegment interactHestiaDMHTTPClient;
+
+    //
+    // Constructor(s)
+    //
 
     public HestiaAuditIMConfigurationFile(){
-        interactHestiaDMHTTPClient = new StandardInteractClientPortSegment();
+        super();
+        interactHestiaDMHTTPClient = new HTTPClientPortSegment();
     }
 
-    public StandardInteractClientPortSegment getInteractHestiaDMHTTPClient() {
+    //
+    // Getters and Setters
+    //
+
+    public HTTPClientPortSegment getInteractHestiaDMHTTPClient() {
         return interactHestiaDMHTTPClient;
     }
 
-    public void setInteractHestiaDMHTTPClient(StandardInteractClientPortSegment interactHestiaDMHTTPClient) {
+    public void setInteractHestiaDMHTTPClient(HTTPClientPortSegment interactHestiaDMHTTPClient) {
         this.interactHestiaDMHTTPClient = interactHestiaDMHTTPClient;
     }
+
+    //
+    // To String
+    //
 
     @Override
     public String toString() {
