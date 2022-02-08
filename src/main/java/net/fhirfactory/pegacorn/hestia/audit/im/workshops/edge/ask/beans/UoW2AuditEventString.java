@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.answer.beans;
+package net.fhirfactory.pegacorn.hestia.audit.im.workshops.edge.ask.beans;
 
 import net.fhirfactory.pegacorn.core.model.petasos.uow.UoW;
 
