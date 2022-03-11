@@ -40,7 +40,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @ApplicationScoped
-public class PetasosAuditPersistenceService implements PetasosAuditEventServiceClientWriterInterface, PetasosAuditEventServiceBrokerInterface, PetasosAuditEventServiceAgentInterface {
+public class PetasosAuditPersistenceService implements PetasosAuditEventServiceClientWriterInterface,
+        PetasosAuditEventServiceBrokerInterface, PetasosAuditEventServiceAgentInterface {
     private static final Logger LOG = LoggerFactory.getLogger(PetasosAuditPersistenceService.class);
 
     private ObjectMapper jsonMapper;
@@ -126,9 +127,9 @@ public class PetasosAuditPersistenceService implements PetasosAuditEventServiceC
 
     @Override
     public MethodOutcome writeAuditEventSynchronously(AuditEvent auditEvent) {
-        getLogger().info(".writeAuditEventSynchronously(): Entry, auditEvent->{}", auditEvent);
+        getLogger().debug(".writeAuditEventSynchronously(): Entry, auditEvent->{}", auditEvent);
         MethodOutcome outcome = writeAuditEvent(auditEvent);
-        getLogger().info(".writeAuditEventSynchronously(): Exit, outcome->{}", outcome);
+        getLogger().debug(".writeAuditEventSynchronously(): Exit, outcome->{}", outcome);
         return(outcome);
     }
 
@@ -137,16 +138,16 @@ public class PetasosAuditPersistenceService implements PetasosAuditEventServiceC
     //
 
     public MethodOutcome writeAuditEvent(AuditEvent auditEvent) {
-        getLogger().info(".writeAuditEvent(): Entry, auditEvent->{}", auditEvent);
+        getLogger().debug(".writeAuditEvent(): Entry, auditEvent->{}", auditEvent);
         MethodOutcome outcome = null;
         if(auditEvent != null) {
-            getLogger().info(".writeAuditEvent(): AuditEvent is not -null-, writing!");
+            getLogger().debug(".writeAuditEvent(): AuditEvent is not -null-, writing!");
             synchronized (getWriterLock()) {
-                getLogger().info(".writeAuditEvent(): Got Writing Semaphore, writing!");
+                getLogger().debug(".writeAuditEvent(): Got Writing Semaphore, writing!");
                 outcome = getHestiaDMHTTPClient().writeAuditEvent(auditEvent);
             }
         }
-        getLogger().info(".writeAuditEvent(): Exit, auditEvent->{}", auditEvent);
+        getLogger().debug(".writeAuditEvent(): Exit, auditEvent->{}", auditEvent);
         return (outcome);
     }
 
@@ -223,7 +224,7 @@ public class PetasosAuditPersistenceService implements PetasosAuditEventServiceC
     // Task
 
     private void asynchronousAuditEventWriterTask(){
-        getLogger().info(".notificationForwarder(): Entry");
+        getLogger().debug(".notificationForwarder(): Entry");
         stillRunning = true;
 
         while(getAuditEventCache().hasEntries()) {
@@ -246,7 +247,7 @@ public class PetasosAuditPersistenceService implements PetasosAuditEventServiceC
             }
         }
         stillRunning = false;
-        getLogger().info(".notificationForwarder(): Exit");
+        getLogger().debug(".notificationForwarder(): Exit");
     }
 
     //

@@ -81,7 +81,7 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
 
     @Override
     protected String deriveTargetEndpointDetails(){
-        getLogger().info(".deriveTargetEndpointDetails(): Entry");
+        getLogger().debug(".deriveTargetEndpointDetails(): Entry");
         MessageBasedWUPEndpointContainer endpoint = new MessageBasedWUPEndpointContainer();
         HTTPClientTopologyEndpoint clientTopologyEndpoint = getTopologyEndpoint(hestiaIMNames.getInteractHestiaDMHTTPClientName());
         String endpointDetails = null;
@@ -107,19 +107,19 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
         if (endpointDetails == null) {
             getLogger().error(".deriveTargetEndpointDetails(): Could not derive EndpointDetails for HestiaDM");
         }
-        getLogger().info(".deriveTargetEndpointDetails(): Exit, endpointDetails --> {}", endpointDetails);
+        getLogger().debug(".deriveTargetEndpointDetails(): Exit, endpointDetails --> {}", endpointDetails);
         return (endpointDetails);
 
     }
 
     protected HTTPClientTopologyEndpoint getTopologyEndpoint(String topologyEndpointName){
-        getLogger().info(".getTopologyEndpoint(): Entry, topologyEndpointName->{}", topologyEndpointName);
+        getLogger().debug(".getTopologyEndpoint(): Entry, topologyEndpointName->{}", topologyEndpointName);
         ArrayList<TopologyNodeFDN> endpointFDNs = processingPlant.getMeAsASoftwareComponent().getEndpoints();
         for(TopologyNodeFDN currentEndpointFDN: endpointFDNs){
             IPCTopologyEndpoint endpointTopologyNode = (IPCTopologyEndpoint)topologyIM.getNode(currentEndpointFDN);
             if(endpointTopologyNode.getEndpointConfigurationName().contentEquals(topologyEndpointName)){
                 HTTPClientTopologyEndpoint clientTopologyEndpoint = (HTTPClientTopologyEndpoint)endpointTopologyNode;
-                getLogger().info(".getTopologyEndpoint(): Exit, node found -->{}", clientTopologyEndpoint);
+                getLogger().debug(".getTopologyEndpoint(): Exit, node found -->{}", clientTopologyEndpoint);
                 return(clientTopologyEndpoint);
             }
         }
@@ -128,11 +128,11 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
     }
 
     public MethodOutcome writeAuditEvent(String auditEventJSONString){
-        getLogger().info(".writeAuditEvent(): Entry, auditEventJSONString->{}", auditEventJSONString);
+        getLogger().debug(".writeAuditEvent(): Entry, auditEventJSONString->{}", auditEventJSONString);
         MethodOutcome outcome = null;
         try {
             if (persistAuditEvent()) {
-                getLogger().info(".writeAuditEvent(): Writing to Hestia-Audit-DM");
+                getLogger().debug(".writeAuditEvent(): Writing to Hestia-Audit-DM");
                 // write the event to the Persistence service
                 AuditEvent auditEvent = getFHIRContextUtility().getJsonParser().parseResource(AuditEvent.class, auditEventJSONString);
                 outcome = writeAuditEvent(auditEvent);
@@ -151,19 +151,19 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
     }
 
     public MethodOutcome writeAuditEvent(AuditEvent auditEvent){
-        getLogger().info(".writeAuditEvent(): Entry, auditEvent->{}", auditEvent);
+        getLogger().debug(".writeAuditEvent(): Entry, auditEvent->{}", auditEvent);
         MethodOutcome outcome = null;
         try {
             if (persistAuditEvent()) {
-                getLogger().info(".writeAuditEvent(): AUDIT_EVENT_PERSISTENCE is true, writing to actual DM");
+                getLogger().debug(".writeAuditEvent(): AUDIT_EVENT_PERSISTENCE is true, writing to actual DM");
                 outcome = getClient().create()
                         .resource(auditEvent)
                         .prettyPrint()
                         .encodedJson()
                         .execute();
             } else {
-                getLogger().info(".writeAuditEvent(): AUDIT_EVENT_PERSISTENCE is false, merely printing event to log file");
-                getLogger().info(getFHIRContextUtility().getJsonParser().encodeResourceToString(auditEvent));
+                getLogger().debug(".writeAuditEvent(): AUDIT_EVENT_PERSISTENCE is false, merely printing event to log file");
+                getLogger().warn("AuditEvent->{}", getFHIRContextUtility().getJsonParser().encodeResourceToString(auditEvent));
                 outcome = new MethodOutcome();
                 outcome.setCreated(true);
             }
@@ -172,7 +172,7 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
             outcome = new MethodOutcome();
             outcome.setCreated(false);
         }
-        getLogger().info(".writeAuditEvent(): Exit, outcome->{}", outcome);
+        getLogger().debug(".writeAuditEvent(): Exit, outcome->{}", outcome);
         return(outcome);
     }
 

@@ -56,7 +56,7 @@ import java.util.UUID;
 
 @ApplicationScoped
 public class PetasosOAMAuditCollectorEndpoint extends PetasosAuditServicesEndpoint
-    implements  PetasosAuditEventServiceHandlerInterface, CapabilityFulfillmentInterface {
+        implements  PetasosAuditEventServiceHandlerInterface, CapabilityFulfillmentInterface {
     private static final Logger LOG = LoggerFactory.getLogger(PetasosOAMAuditCollectorEndpoint.class);
 
     @Inject
@@ -106,10 +106,10 @@ public class PetasosOAMAuditCollectorEndpoint extends PetasosAuditServicesEndpoi
 
     @Override
     public Boolean logAuditEventHandler(AuditEvent event, JGroupsIntegrationPointSummary sourceJGroupsIP){
-        getLogger().info(".logAuditEventHandler(): Entry, event->{}, sourceJGroupsIP->{}", event, sourceJGroupsIP);
+        getLogger().debug(".logAuditEventHandler(): Entry, event->{}, sourceJGroupsIP->{}", event, sourceJGroupsIP);
         MethodOutcome outcome = null;
         if((event != null)) {
-            getLogger().info(".logAuditEventHandler(): Event is not -null-, writing it to the DM");
+            getLogger().debug(".logAuditEventHandler(): Event is not -null-, writing it to the DM");
             outcome = auditEventWriter.writeAuditEventSynchronously(event);
         }
         Boolean success = false;
@@ -119,37 +119,37 @@ public class PetasosOAMAuditCollectorEndpoint extends PetasosAuditServicesEndpoi
             }
         }
         getMetricsAgent().incrementRemoteProcedureCallHandledCount();
-        getLogger().info(".logAuditEventHandler(): Exit, success->{}", success);
+        getLogger().debug(".logAuditEventHandler(): Exit, success->{}", success);
         return(success);
     }
 
     @Override
     public Boolean logAuditEventAsynchronouslyHandler(AuditEvent event, JGroupsIntegrationPointSummary jgroupsIP) {
-        getLogger().info(".logAuditEventAsynchronouslyHandler(): Entry, event->{}, sourceJGroupsIP->{}", event, jgroupsIP);
+        getLogger().debug(".logAuditEventAsynchronouslyHandler(): Entry, event->{}, sourceJGroupsIP->{}", event, jgroupsIP);
         Boolean success = false;
         if(event != null) {
-            getLogger().info(".logAuditEventAsynchronouslyHandler(): Event is not -null-, adding it to queue");
+            getLogger().debug(".logAuditEventAsynchronouslyHandler(): Event is not -null-, adding it to queue");
             auditEventCache.addAuditEvent(event);
             success = true;
         }
         getMetricsAgent().incrementRemoteProcedureCallHandledCount();
-        getLogger().info(".logAuditEventAsynchronouslyHandler(): Exit, success->{}", success);
+        getLogger().debug(".logAuditEventAsynchronouslyHandler(): Exit, success->{}", success);
         return(success);
     }
 
     @Override
     public Boolean logMultipleAuditEventHandler(List<AuditEvent> eventList, JGroupsIntegrationPointSummary jgroupsIP){
-        getLogger().info(".logMultipleAuditEventHandler(): Entry, eventList->{}, jgroupsIP->{}", eventList, jgroupsIP);
+        getLogger().debug(".logMultipleAuditEventHandler(): Entry, eventList->{}, jgroupsIP->{}", eventList, jgroupsIP);
         Boolean success = false;
         if(eventList != null) {
-            getLogger().info(".logMultipleAuditEventHandler(): EventList is not -null-, adding entries to queue");
+            getLogger().debug(".logMultipleAuditEventHandler(): EventList is not -null-, adding entries to queue");
             for (AuditEvent currentAuditEvent : eventList) {
                 auditEventCache.addAuditEvent(currentAuditEvent);
             }
         }
         success = true;
         getMetricsAgent().incrementRemoteProcedureCallHandledCount();
-        getLogger().info(".logMultipleAuditEventHandler(): Exit, success->{}", success);
+        getLogger().debug(".logMultipleAuditEventHandler(): Exit, success->{}", success);
         return(success);
     }
 
