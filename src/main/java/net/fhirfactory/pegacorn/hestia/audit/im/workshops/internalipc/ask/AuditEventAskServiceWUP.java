@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceClientWriterInterface;
 import net.fhirfactory.pegacorn.core.interfaces.capabilities.CapabilityFulfillmentInterface;
 import net.fhirfactory.pegacorn.core.interfaces.topology.WorkshopInterface;
-import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
+import net.fhirfactory.pegacorn.core.model.petasos.dataparcel.DataParcelManifest;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.adapters.HTTPClientAdapter;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.http.HTTPClientTopologyEndpoint;
 import net.fhirfactory.pegacorn.hestia.audit.im.common.HestiaIMNames;
