@@ -22,8 +22,7 @@
 package net.fhirfactory.pegacorn.hestia.audit.im.processingplant;
 
 import net.fhirfactory.pegacorn.core.constants.systemwide.PegacornReferenceProperties;
-import net.fhirfactory.pegacorn.core.model.topology.valuesets.ProcessingPlantProviderRoleEnum;
-import net.fhirfactory.pegacorn.core.model.topology.valuesets.ProcessingPlantTypeEnum;
+import net.fhirfactory.pegacorn.core.model.topology.role.ProcessingPlantRoleEnum;
 import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
 import net.fhirfactory.pegacorn.processingplant.ProcessingPlant;
 
@@ -52,12 +51,7 @@ public abstract class HestiaAuditIM extends ProcessingPlant {
     //
 
     @Override
-    protected ProcessingPlantTypeEnum specifyProcessingPlantType() {
-        return (ProcessingPlantTypeEnum.PROCESSING_PLANT_TYPE_INFORMATION_MANAGER);
-    }
-
-    @Override
-    protected ProcessingPlantProviderRoleEnum specifyPlantProviderRole() {
-        return ProcessingPlantProviderRoleEnum.PETASOS_SERVICE_PROVIDER_AUDIT_MANAGEMENT;
+    public ProcessingPlantRoleEnum getProcessingPlantCapability() {
+        return (ProcessingPlantRoleEnum.PETASOS_SERVICE_PROVIDER_AUDIT_MANAGEMENT);
     }
 }
