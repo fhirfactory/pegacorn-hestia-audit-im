@@ -19,41 +19,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.workshops.collect;
+package net.fhirfactory.pegacorn.hestia.audit.im.processingplant;
 
-import net.fhirfactory.pegacorn.common.model.componentid.TopologyNodeTypeEnum;
-import net.fhirfactory.pegacorn.workshops.base.Workshop;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.fhirfactory.pegacorn.core.constants.systemwide.PegacornReferenceProperties;
+import net.fhirfactory.pegacorn.core.model.topology.role.ProcessingPlantRoleEnum;
+import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
+import net.fhirfactory.pegacorn.processingplant.ProcessingPlant;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-@ApplicationScoped
-public class HestiaAuditIMCollectWorkshop extends Workshop {
-    private static final Logger LOG = LoggerFactory.getLogger(HestiaAuditIMCollectWorkshop.class);
+public abstract class HestiaAuditIM extends ProcessingPlant {
+    private boolean hestiaAuditIMInitialised;
 
-    @Override
-    protected Logger specifyLogger() {
-        return (LOG);
+    @Inject
+    private FHIRElementTopicFactory fhirElementTopicFactory;
+
+    @Inject
+    private PegacornReferenceProperties pegacornReferenceProperties;
+
+    //
+    // Constructor(s)
+    //
+
+    public HestiaAuditIM(){
+        super();
+        hestiaAuditIMInitialised = false;
     }
 
-    @Override
-    protected String specifyWorkshopName() {
-        return ("Collect");
-    }
+    //
+    // Abstract Method Implementations
+    //
 
     @Override
-    protected String specifyWorkshopVersion() {
-        return ("1.0.0");
-    }
-
-    @Override
-    protected TopologyNodeTypeEnum specifyWorkshopType() {
-        return (TopologyNodeTypeEnum.WORKSHOP);
-    }
-
-    @Override
-    protected void invokePostConstructInitialisation() {
-
+    public ProcessingPlantRoleEnum getProcessingPlantCapability() {
+        return (ProcessingPlantRoleEnum.PETASOS_SERVICE_PROVIDER_AUDIT_MANAGEMENT);
     }
 }

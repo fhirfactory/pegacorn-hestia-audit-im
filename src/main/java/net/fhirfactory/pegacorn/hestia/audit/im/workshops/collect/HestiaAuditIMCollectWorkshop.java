@@ -19,31 +19,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.processingplant;
+package net.fhirfactory.pegacorn.hestia.audit.im.workshops.collect;
 
-import net.fhirfactory.pegacorn.internals.PegacornReferenceProperties;
-import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
-import net.fhirfactory.pegacorn.platform.edge.services.InterSubSystemPubSubBroker;
-import net.fhirfactory.pegacorn.processingplant.ProcessingPlant;
+import net.fhirfactory.pegacorn.core.model.componentid.PegacornSystemComponentTypeTypeEnum;
+import net.fhirfactory.pegacorn.workshops.base.Workshop;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 
-public abstract class HestiaAuditIM extends ProcessingPlant {
-    private boolean hestiaAuditIMInitialised;
+@ApplicationScoped
+public class HestiaAuditIMCollectWorkshop extends Workshop {
+    private static final Logger LOG = LoggerFactory.getLogger(HestiaAuditIMCollectWorkshop.class);
 
-    @Inject
-    private InterSubSystemPubSubBroker pubSubBroker;
-
-    @Inject
-    private FHIRElementTopicFactory fhirElementTopicFactory;
-
-    @Inject
-    private PegacornReferenceProperties pegacornReferenceProperties;
-
-    public HestiaAuditIM(){
-        super();
-        hestiaAuditIMInitialised = false;
+    @Override
+    protected Logger specifyLogger() {
+        return (LOG);
     }
 
+    @Override
+    protected String specifyWorkshopName() {
+        return ("Collect");
+    }
 
+    @Override
+    protected String specifyWorkshopVersion() {
+        return ("1.0.0");
+    }
+
+    @Override
+    protected PegacornSystemComponentTypeTypeEnum specifyWorkshopType() {
+        return (PegacornSystemComponentTypeTypeEnum.WORKSHOP);
+    }
+
+    @Override
+    protected void invokePostConstructInitialisation() {
+
+    }
 }

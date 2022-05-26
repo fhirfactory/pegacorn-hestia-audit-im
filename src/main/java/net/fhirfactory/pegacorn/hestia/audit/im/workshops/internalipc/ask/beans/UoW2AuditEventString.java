@@ -19,9 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.workshops.interact.beans;
+package net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.ask.beans;
 
-import net.fhirfactory.pegacorn.petasos.model.uow.UoW;
+import net.fhirfactory.pegacorn.core.model.petasos.uow.UoW;
 
 import javax.enterprise.context.ApplicationScoped;
 

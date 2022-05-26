@@ -1,10 +1,12 @@
-package net.fhirfactory.pegacorn.hestia.im.processingplant.configuration;
+package net.fhirfactory.pegacorn.hestia.audit.im.processingplant.configuration;
 
-import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.interact.StandardInteractClientPortSegment;
+import net.fhirfactory.pegacorn.core.model.topology.nodes.*;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.http.HTTPClientPortSegment;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.interact.InteractClientPortSegment;
+import net.fhirfactory.pegacorn.deployment.topology.factories.archetypes.base.endpoints.HTTPTopologyEndpointFactory;
 import net.fhirfactory.pegacorn.deployment.topology.factories.archetypes.fhirpersistence.im.FHIRIMSubsystemTopologyFactory;
-import net.fhirfactory.pegacorn.deployment.topology.model.nodes.*;
-import net.fhirfactory.pegacorn.deployment.topology.model.nodes.common.EndpointProviderInterface;
-import net.fhirfactory.pegacorn.hestia.im.common.HestiaIMNames;
+import net.fhirfactory.pegacorn.core.model.topology.nodes.common.EndpointProviderInterface;
+import net.fhirfactory.pegacorn.hestia.audit.im.common.HestiaIMNames;
 import net.fhirfactory.pegacorn.util.PegacornEnvironmentProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,9 @@ public class HestiaAuditIMTopologyFactory extends FHIRIMSubsystemTopologyFactory
     @Inject
     private PegacornEnvironmentProperties pegacornEnvironmentProperties;
 
+    @Inject
+    private HTTPTopologyEndpointFactory httpTopologyEndpointFactory;
+
     @Override
     protected Logger specifyLogger() {
         return (LOG);
@@ -33,34 +38,33 @@ public class HestiaAuditIMTopologyFactory extends FHIRIMSubsystemTopologyFactory
     }
 
     @Override
-    protected ProcessingPlantTopologyNode buildSubsystemTopology() {
+    protected ProcessingPlantSoftwareComponent buildSubsystemTopology() {
         SubsystemTopologyNode subsystemTopologyNode = addSubsystemNode(getTopologyIM().getSolutionTopology());
         BusinessServiceTopologyNode businessServiceTopologyNode = addBusinessServiceNode(subsystemTopologyNode);
         DeploymentSiteTopologyNode deploymentSiteTopologyNode = addDeploymentSiteNode(businessServiceTopologyNode);
         ClusterServiceTopologyNode clusterServiceTopologyNode = addClusterServiceNode(deploymentSiteTopologyNode);
 
         PlatformTopologyNode platformTopologyNode = addPlatformNode(clusterServiceTopologyNode);
-        ProcessingPlantTopologyNode processingPlantTopologyNode = addPegacornProcessingPlant(platformTopologyNode);
-        addPrometheusPort(processingPlantTopologyNode);
-        addJolokiaPort(processingPlantTopologyNode);
-        addKubeLivelinessPort(processingPlantTopologyNode);
-        addKubeReadinessPort(processingPlantTopologyNode);
-        addEdgeAnswerPort(processingPlantTopologyNode);
-        addIntraZoneIPCJGroupsPort(processingPlantTopologyNode);
-        addInterZoneIPCJGroupsPort(processingPlantTopologyNode);
+        ProcessingPlantSoftwareComponent processingPlantSoftwareComponent = addPegacornProcessingPlant(platformTopologyNode);
+        addPrometheusPort(processingPlantSoftwareComponent);
+        addJolokiaPort(processingPlantSoftwareComponent);
+        addKubeLivelinessPort(processingPlantSoftwareComponent);
+        addKubeReadinessPort(processingPlantSoftwareComponent);
+        addEdgeAnswerPort(processingPlantSoftwareComponent);
+        addAllJGroupsEndpoints(processingPlantSoftwareComponent);
 
         // Unique to HestiaIM
         getLogger().trace(".buildSubsystemTopology(): Add the httpFHIRClient port to the ProcessingPlant Topology Node");
-        addHTTPClientPorts(processingPlantTopologyNode);
-        return(processingPlantTopologyNode);
+        addHTTPClientPorts(processingPlantSoftwareComponent);
+        return(processingPlantSoftwareComponent);
     }
 
     protected void addHTTPClientPorts( EndpointProviderInterface endpointProvider) {
         getLogger().debug(".addHTTPClientPorts(): Entry, endpointProvider->{}", endpointProvider);
 
         getLogger().trace(".addHTTPClientPorts(): Creating the HTTP Client (Used to Connect-To Hestia Audit DM)");
-        StandardInteractClientPortSegment interactHTTPClient = ((HestiaAuditIMConfigurationFile) getPropertyFile()).getInteractHestiaDMHTTPClient();
-        newHTTPClient(endpointProvider, hestiaIMNames.getInteractHestiaDMHTTPClientName(),interactHTTPClient );
+        HTTPClientPortSegment interactHTTPClient = ((HestiaAuditIMConfigurationFile) getPropertyFile()).getInteractHestiaDMHTTPClient();
+        httpTopologyEndpointFactory.newHTTPClientTopologyEndpoint(getPropertyFile(), endpointProvider, hestiaIMNames.getInteractHestiaDMHTTPClientName(),interactHTTPClient );
 
         getLogger().debug(".addHTTPClientPorts(): Exit");
     }

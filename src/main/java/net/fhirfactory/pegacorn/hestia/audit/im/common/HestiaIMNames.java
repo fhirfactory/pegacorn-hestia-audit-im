@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.hestia.im.common;
+package net.fhirfactory.pegacorn.hestia.audit.im.common;
 
 import javax.enterprise.context.ApplicationScoped;
 
