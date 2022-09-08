@@ -56,7 +56,7 @@ import java.util.UUID;
 
 @ApplicationScoped
 public class PetasosOAMAuditCollectorEndpoint extends PetasosAuditServicesEndpoint
-        implements  PetasosAuditEventServiceHandlerInterface, CapabilityFulfillmentInterface {
+        implements  PetasosAuditEventServiceHandlerInterface {
     private static final Logger LOG = LoggerFactory.getLogger(PetasosOAMAuditCollectorEndpoint.class);
 
     @Inject
