@@ -23,7 +23,7 @@ package net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.ask;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceClientWriterInterface;
-import net.fhirfactory.pegacorn.core.interfaces.capabilities.CapabilityFulfillmentInterface;
+import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceHandlerInterface;
 import net.fhirfactory.pegacorn.core.interfaces.topology.WorkshopInterface;
 import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.adapters.HTTPClientAdapter;
@@ -75,7 +75,7 @@ public class AuditEventAskServiceWUP extends InteractEgressMessagingGatewayWUP {
     private PetasosAuditEventServiceClientWriterInterface auditEventWriter;
 
     @Inject
-    private CapabilityFulfillmentInterface capabilityFulfillmentInterface;
+    private PetasosAuditEventServiceHandlerInterface auditEventServiceHandlerInterface;
 
     @Override
     protected List<DataParcelManifest> specifySubscriptionTopics() {
@@ -153,7 +153,7 @@ public class AuditEventAskServiceWUP extends InteractEgressMessagingGatewayWUP {
 
     @Override
     protected void registerCapabilities(){
-        getProcessingPlant().registerCapabilityFulfillmentService("FHIR-AuditEvent-Persistence", capabilityFulfillmentInterface);
+        getProcessingPlant().registerCapabilityFulfillmentService("FHIR-AuditEvent-Persistence", auditEventServiceHandlerInterface);
     }
 
     @Override
