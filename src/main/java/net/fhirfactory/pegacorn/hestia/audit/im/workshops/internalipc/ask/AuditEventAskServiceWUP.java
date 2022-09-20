@@ -22,9 +22,9 @@
 package net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.ask;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceClientWriterInterface;
-import net.fhirfactory.pegacorn.core.interfaces.capabilities.CapabilityFulfillmentInterface;
-import net.fhirfactory.pegacorn.core.interfaces.topology.WorkshopInterface;
+import net.fhirfactory.dricats.interfaces.auditing.PetasosAuditEventServiceClientWriterInterface;
+import net.fhirfactory.dricats.interfaces.capabilities.CapabilityFulfillmentInterface;
+import net.fhirfactory.dricats.interfaces.topology.WorkshopInterface;
 import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.adapters.HTTPClientAdapter;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.http.HTTPClientTopologyEndpoint;
@@ -32,9 +32,9 @@ import net.fhirfactory.pegacorn.hestia.audit.im.common.HestiaIMNames;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.ask.beans.HestiaDMHTTPClient;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.ask.beans.MethodOutcome2UoW;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.ask.beans.UoW2AuditEventString;
-import net.fhirfactory.pegacorn.petasos.core.moa.wup.MessageBasedWUPEndpointContainer;
-import net.fhirfactory.pegacorn.workshops.EdgeWorkshop;
-import net.fhirfactory.pegacorn.wups.archetypes.petasosenabled.messageprocessingbased.InteractEgressMessagingGatewayWUP;
+import net.fhirfactory.pegacorn.petasos.participant.wup.MessageBasedWUPEndpointContainer;
+import net.fhirfactory.dricats.petasos.participant.workshops.EdgeWorkshop;
+import net.fhirfactory.dricats.petasos.participant.wup.messagebased.InteractEgressMessagingGatewayWUP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

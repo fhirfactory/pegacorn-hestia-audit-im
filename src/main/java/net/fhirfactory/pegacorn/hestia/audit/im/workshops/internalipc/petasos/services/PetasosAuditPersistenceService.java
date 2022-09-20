@@ -23,10 +23,10 @@ package net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.petasos.s
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceAgentInterface;
-import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceBrokerInterface;
-import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceClientWriterInterface;
-import net.fhirfactory.pegacorn.core.interfaces.topology.ProcessingPlantInterface;
+import net.fhirfactory.dricats.interfaces.auditing.PetasosAuditEventServiceAgentInterface;
+import net.fhirfactory.dricats.interfaces.auditing.PetasosAuditEventServiceBrokerInterface;
+import net.fhirfactory.dricats.interfaces.auditing.PetasosAuditEventServiceClientWriterInterface;
+import net.fhirfactory.dricats.interfaces.topology.ProcessingPlantInterface;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.datagrid.AsynchronousWriterAuditEventCache;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.ask.beans.HestiaDMHTTPClient;
 import org.hl7.fhir.r4.model.AuditEvent;

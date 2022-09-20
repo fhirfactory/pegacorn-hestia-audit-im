@@ -21,14 +21,14 @@
  */
 package net.fhirfactory.pegacorn.hestia.audit.im.processingplant;
 
-import net.fhirfactory.pegacorn.core.constants.systemwide.PegacornReferenceProperties;
+import net.fhirfactory.dricats.constants.systemwide.PegacornReferenceProperties;
 import net.fhirfactory.pegacorn.core.model.topology.role.ProcessingPlantRoleEnum;
-import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
-import net.fhirfactory.pegacorn.processingplant.ProcessingPlant;
+import net.fhirfactory.dricats.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
+import net.fhirfactory.dricats.petasos.participant.processingplant.PetasosEnabledProcessingPlant;
 
 import javax.inject.Inject;
 
-public abstract class HestiaAuditIM extends ProcessingPlant {
+public abstract class HestiaAuditIM extends PetasosEnabledProcessingPlant {
     private boolean hestiaAuditIMInitialised;
 
     @Inject

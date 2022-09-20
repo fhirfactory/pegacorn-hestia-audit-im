@@ -22,29 +22,23 @@
 package net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.petasos.endpoint;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceClientWriterInterface;
-import net.fhirfactory.pegacorn.core.interfaces.auditing.PetasosAuditEventServiceHandlerInterface;
-import net.fhirfactory.pegacorn.core.interfaces.capabilities.CapabilityFulfillmentInterface;
-import net.fhirfactory.pegacorn.core.interfaces.capabilities.CapabilityProviderNameServiceInterface;
-import net.fhirfactory.pegacorn.core.interfaces.topology.ProcessingPlantInterface;
-import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationRequest;
-import net.fhirfactory.pegacorn.core.model.capabilities.base.CapabilityUtilisationResponse;
-import net.fhirfactory.pegacorn.core.model.capabilities.base.factories.MethodOutcomeFactory;
-import net.fhirfactory.pegacorn.core.model.capabilities.valuesets.WorkUnitProcessorCapabilityEnum;
+import net.fhirfactory.dricats.interfaces.auditing.PetasosAuditEventServiceClientWriterInterface;
+import net.fhirfactory.dricats.interfaces.auditing.PetasosAuditEventServiceHandlerInterface;
+import net.fhirfactory.dricats.interfaces.capabilities.CapabilityFulfillmentInterface;
+import net.fhirfactory.dricats.interfaces.capabilities.CapabilityProviderNameServiceInterface;
+import net.fhirfactory.dricats.model.capabilities.base.CapabilityUtilisationRequest;
+import net.fhirfactory.dricats.model.capabilities.base.CapabilityUtilisationResponse;
+import net.fhirfactory.dricats.model.capabilities.base.factories.MethodOutcomeFactory;
+import net.fhirfactory.dricats.model.capabilities.valuesets.WorkUnitProcessorCapabilityEnum;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.edge.jgroups.JGroupsIntegrationPointSummary;
-import net.fhirfactory.pegacorn.core.model.topology.role.ProcessingPlantRoleEnum;
-import net.fhirfactory.pegacorn.core.model.transaction.factories.PegacornTransactionMethodOutcomeFactory;
-import net.fhirfactory.pegacorn.core.model.transaction.model.PegacornTransactionMethodOutcome;
-import net.fhirfactory.pegacorn.core.model.transaction.model.PegacornTransactionOutcome;
-import net.fhirfactory.pegacorn.core.model.transaction.model.SimpleResourceID;
-import net.fhirfactory.pegacorn.core.model.transaction.valuesets.PegacornTransactionStatusEnum;
-import net.fhirfactory.pegacorn.core.model.transaction.valuesets.PegacornTransactionTypeEnum;
+import net.fhirfactory.dricats.model.transaction.factories.PegacornTransactionMethodOutcomeFactory;
+import net.fhirfactory.dricats.model.transaction.model.PegacornTransactionOutcome;
+import net.fhirfactory.dricats.model.transaction.model.SimpleResourceID;
+import net.fhirfactory.dricats.model.transaction.valuesets.PegacornTransactionStatusEnum;
+import net.fhirfactory.dricats.model.transaction.valuesets.PegacornTransactionTypeEnum;
 import net.fhirfactory.pegacorn.hestia.audit.im.workshops.datagrid.AsynchronousWriterAuditEventCache;
-import net.fhirfactory.pegacorn.petasos.endpoints.services.audit.PetasosAuditServicesEndpoint;
-import net.fhirfactory.pegacorn.util.FHIRContextUtility;
+import net.fhirfactory.pegacorn.petasos.ipc.endpoints.audit.PetasosAuditServicesEndpoint;
 import org.hl7.fhir.r4.model.AuditEvent;
-import org.hl7.fhir.r4.model.IdType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +46,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @ApplicationScoped
-public class PetasosOAMAuditCollectorEndpoint extends PetasosAuditServicesEndpoint
+public class PetasosOAMAuditCollectorEndpoint extends PetasosAuditClusterConnection
         implements  PetasosAuditEventServiceHandlerInterface, CapabilityFulfillmentInterface {
     private static final Logger LOG = LoggerFactory.getLogger(PetasosOAMAuditCollectorEndpoint.class);
 
@@ -105,7 +98,7 @@ public class PetasosOAMAuditCollectorEndpoint extends PetasosAuditServicesEndpoi
     //
 
     @Override
-    public Boolean logAuditEventHandler(AuditEvent event, JGroupsIntegrationPointSummary sourceJGroupsIP){
+    public Boolean logAuditEventHandler(AuditEvent event, JGroupsChannelConnectorSummary sourceJGroupsIP){
         getLogger().debug(".logAuditEventHandler(): Entry, event->{}, sourceJGroupsIP->{}", event, sourceJGroupsIP);
         MethodOutcome outcome = null;
         if((event != null)) {
@@ -124,7 +117,7 @@ public class PetasosOAMAuditCollectorEndpoint extends PetasosAuditServicesEndpoi
     }
 
     @Override
-    public Boolean logAuditEventAsynchronouslyHandler(AuditEvent event, JGroupsIntegrationPointSummary jgroupsIP) {
+    public Boolean logAuditEventAsynchronouslyHandler(AuditEvent event, JGroupsChannelConnectorSummary jgroupsIP) {
         getLogger().debug(".logAuditEventAsynchronouslyHandler(): Entry, event->{}, sourceJGroupsIP->{}", event, jgroupsIP);
         Boolean success = false;
         if(event != null) {
@@ -138,7 +131,7 @@ public class PetasosOAMAuditCollectorEndpoint extends PetasosAuditServicesEndpoi
     }
 
     @Override
-    public Boolean logMultipleAuditEventHandler(List<AuditEvent> eventList, JGroupsIntegrationPointSummary jgroupsIP){
+    public Boolean logMultipleAuditEventHandler(List<AuditEvent> eventList, JGroupsChannelConnectorSummary jgroupsIP){
         getLogger().debug(".logMultipleAuditEventHandler(): Entry, eventList->{}, jgroupsIP->{}", eventList, jgroupsIP);
         Boolean success = false;
         if(eventList != null) {

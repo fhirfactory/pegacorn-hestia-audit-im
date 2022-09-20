@@ -22,14 +22,14 @@
 package net.fhirfactory.pegacorn.hestia.audit.im.workshops.collect;
 
 import net.fhirfactory.pegacorn.core.model.componentid.PegacornSystemComponentTypeTypeEnum;
-import net.fhirfactory.pegacorn.workshops.base.Workshop;
+import net.fhirfactory.dricats.petasos.participant.workshops.base.UnmonitoredWorkshop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class HestiaAuditIMCollectWorkshop extends Workshop {
+public class HestiaAuditIMCollectWorkshop extends UnmonitoredWorkshop {
     private static final Logger LOG = LoggerFactory.getLogger(HestiaAuditIMCollectWorkshop.class);
 
     @Override
@@ -48,8 +48,8 @@ public class HestiaAuditIMCollectWorkshop extends Workshop {
     }
 
     @Override
-    protected PegacornSystemComponentTypeTypeEnum specifyWorkshopType() {
-        return (PegacornSystemComponentTypeTypeEnum.WORKSHOP);
+    protected DricatsSoftwareComponentTypeEnum specifyWorkshopType() {
+        return (DricatsSoftwareComponentTypeEnum.WORKSHOP);
     }
 
     @Override
