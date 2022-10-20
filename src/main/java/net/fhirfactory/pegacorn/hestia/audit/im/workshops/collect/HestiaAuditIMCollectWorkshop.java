@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.hestia.audit.im.workshops.collect;
 
-import net.fhirfactory.pegacorn.core.model.componentid.PegacornSystemComponentTypeTypeEnum;
+import net.fhirfactory.pegacorn.core.model.componentid.SoftwareComponentTypeEnum;
 import net.fhirfactory.pegacorn.workshops.base.Workshop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +48,8 @@ public class HestiaAuditIMCollectWorkshop extends Workshop {
     }
 
     @Override
-    protected PegacornSystemComponentTypeTypeEnum specifyWorkshopType() {
-        return (PegacornSystemComponentTypeTypeEnum.WORKSHOP);
+    protected SoftwareComponentTypeEnum specifyWorkshopType() {
+        return (SoftwareComponentTypeEnum.WORKSHOP);
     }
 
     @Override

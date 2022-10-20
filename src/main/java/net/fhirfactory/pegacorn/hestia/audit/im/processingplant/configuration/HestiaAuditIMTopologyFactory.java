@@ -1,11 +1,10 @@
 package net.fhirfactory.pegacorn.hestia.audit.im.processingplant.configuration;
 
 import net.fhirfactory.pegacorn.core.model.topology.nodes.*;
+import net.fhirfactory.pegacorn.core.model.topology.nodes.common.EndpointProviderInterface;
 import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.http.HTTPClientPortSegment;
-import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.segments.ports.interact.InteractClientPortSegment;
 import net.fhirfactory.pegacorn.deployment.topology.factories.archetypes.base.endpoints.HTTPTopologyEndpointFactory;
 import net.fhirfactory.pegacorn.deployment.topology.factories.archetypes.fhirpersistence.im.FHIRIMSubsystemTopologyFactory;
-import net.fhirfactory.pegacorn.core.model.topology.nodes.common.EndpointProviderInterface;
 import net.fhirfactory.pegacorn.hestia.audit.im.common.HestiaIMNames;
 import net.fhirfactory.pegacorn.util.PegacornEnvironmentProperties;
 import org.slf4j.Logger;
@@ -39,13 +38,13 @@ public class HestiaAuditIMTopologyFactory extends FHIRIMSubsystemTopologyFactory
 
     @Override
     protected ProcessingPlantSoftwareComponent buildSubsystemTopology() {
-        SubsystemTopologyNode subsystemTopologyNode = addSubsystemNode(getTopologyIM().getSolutionTopology());
-        BusinessServiceTopologyNode businessServiceTopologyNode = addBusinessServiceNode(subsystemTopologyNode);
-        DeploymentSiteTopologyNode deploymentSiteTopologyNode = addDeploymentSiteNode(businessServiceTopologyNode);
-        ClusterServiceTopologyNode clusterServiceTopologyNode = addClusterServiceNode(deploymentSiteTopologyNode);
+        SubsystemTopologyNode subsystemTopologyNode = buildSubsystemNodeFromConfigurationFile();
+        BusinessServiceTopologyNode businessServiceTopologyNode = buildBusinessServiceNode(subsystemTopologyNode);
+        DeploymentSiteTopologyNode deploymentSiteTopologyNode = buildDeploymentSiteNode(businessServiceTopologyNode);
+        ClusterServiceTopologyNode clusterServiceTopologyNode = buildClusterServiceNode(deploymentSiteTopologyNode,businessServiceTopologyNode);
 
-        PlatformTopologyNode platformTopologyNode = addPlatformNode(clusterServiceTopologyNode);
-        ProcessingPlantSoftwareComponent processingPlantSoftwareComponent = addPegacornProcessingPlant(platformTopologyNode);
+        PlatformTopologyNode platformTopologyNode = buildPlatformNode(clusterServiceTopologyNode);
+        ProcessingPlantSoftwareComponent processingPlantSoftwareComponent = buildProcessingPlant(platformTopologyNode,clusterServiceTopologyNode);
         addPrometheusPort(processingPlantSoftwareComponent);
         addJolokiaPort(processingPlantSoftwareComponent);
         addKubeLivelinessPort(processingPlantSoftwareComponent);

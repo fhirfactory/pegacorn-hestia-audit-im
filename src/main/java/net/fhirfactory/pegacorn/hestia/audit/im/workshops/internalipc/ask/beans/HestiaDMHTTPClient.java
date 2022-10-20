@@ -24,12 +24,10 @@ package net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.ask.beans
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import net.fhirfactory.pegacorn.core.constants.systemwide.PegacornReferenceProperties;
 import net.fhirfactory.pegacorn.core.interfaces.topology.ProcessingPlantInterface;
-import net.fhirfactory.pegacorn.core.model.componentid.TopologyNodeFDN;
+import net.fhirfactory.pegacorn.core.model.componentid.ComponentIdType;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.adapters.HTTPClientAdapter;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.base.IPCTopologyEndpoint;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.http.HTTPClientTopologyEndpoint;
-import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.ExternalSystemIPCAdapter;
-import net.fhirfactory.pegacorn.core.model.topology.endpoints.interact.StandardInteractClientTopologyEndpointPort;
 import net.fhirfactory.pegacorn.core.model.topology.nodes.external.ConnectedExternalSystemTopologyNode;
 import net.fhirfactory.pegacorn.deployment.topology.manager.TopologyIM;
 import net.fhirfactory.pegacorn.hestia.audit.im.common.HestiaIMNames;
@@ -114,9 +112,9 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
 
     protected HTTPClientTopologyEndpoint getTopologyEndpoint(String topologyEndpointName){
         getLogger().debug(".getTopologyEndpoint(): Entry, topologyEndpointName->{}", topologyEndpointName);
-        ArrayList<TopologyNodeFDN> endpointFDNs = processingPlant.getMeAsASoftwareComponent().getEndpoints();
-        for(TopologyNodeFDN currentEndpointFDN: endpointFDNs){
-            IPCTopologyEndpoint endpointTopologyNode = (IPCTopologyEndpoint)topologyIM.getNode(currentEndpointFDN);
+        ArrayList<ComponentIdType> endpointFDNs = processingPlant.getTopologyNode().getEndpoints();
+        for(ComponentIdType currentEndpointId: endpointFDNs){
+            IPCTopologyEndpoint endpointTopologyNode = (IPCTopologyEndpoint)topologyIM.getNode(currentEndpointId);
             if(endpointTopologyNode.getEndpointConfigurationName().contentEquals(topologyEndpointName)){
                 HTTPClientTopologyEndpoint clientTopologyEndpoint = (HTTPClientTopologyEndpoint)endpointTopologyNode;
                 getLogger().debug(".getTopologyEndpoint(): Exit, node found -->{}", clientTopologyEndpoint);
@@ -178,7 +176,7 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
 
     private boolean persistAuditEvent(){
         if(!this.resolvedAuditPersistenceValue){
-            String auditEventPersistenceValue = processingPlant.getMeAsASoftwareComponent().getOtherConfigurationParameter("AUDIT_EVENT_PERSISTENCE");
+            String auditEventPersistenceValue = processingPlant.getTopologyNode().getOtherConfigurationParameter("AUDIT_EVENT_PERSISTENCE");
             if (auditEventPersistenceValue.equalsIgnoreCase("true")) {
                 this.auditPersistence = true;
             } else {

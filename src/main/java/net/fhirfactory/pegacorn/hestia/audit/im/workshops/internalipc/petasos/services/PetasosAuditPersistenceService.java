@@ -188,7 +188,7 @@ public class PetasosAuditPersistenceService implements PetasosAuditEventServiceC
     //
 
     private boolean useHadoopDMService() {
-        String parameterValue = getProcessingPlant().getMeAsASoftwareComponent().getOtherConfigurationParameter("IM_TO_DM_TECHNOLOGY");
+        String parameterValue = getProcessingPlant().getTopologyNode().getOtherConfigurationParameter("IM_TO_DM_TECHNOLOGY");
         if (parameterValue != null) {
             if (parameterValue.equalsIgnoreCase("jgroups")) {
                 return (true);
@@ -209,7 +209,8 @@ public class PetasosAuditPersistenceService implements PetasosAuditEventServiceC
     private void scheduleAsynchronousAuditEventWriterDaemon() {
         getLogger().debug(".scheduleAsynchronousAuditEventWriterDaemon(): Entry");
         TimerTask asynchronousAuditEventWriterDaemon = new TimerTask() {
-            public void run() {
+            @Override
+			public void run() {
                 getLogger().debug(".asynchronousAuditEventWriterDaemon(): Entry");
                 asynchronousAuditEventWriterTask();
                 getLogger().debug(".asynchronousAuditEventWriterDaemon(): Exit");
@@ -257,7 +258,7 @@ public class PetasosAuditPersistenceService implements PetasosAuditEventServiceC
 
     @Override
     public Boolean captureAuditEvent(AuditEvent event, boolean synchronous) {
-        Boolean success = logAuditEvent(getProcessingPlant().getSubsystemParticipantName(), event);
+        Boolean success = logAuditEvent(getProcessingPlant().getTopologyNode().getParticipant().getParticipantId().getSubsystemName(), event);
         return(success);
     }
 }
