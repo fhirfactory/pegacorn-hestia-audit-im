@@ -22,7 +22,7 @@
 package net.fhirfactory.pegacorn.hestia.audit.im.workshops.internalipc.ask.beans;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import net.fhirfactory.pegacorn.core.constants.systemwide.PegacornReferenceProperties;
+import net.fhirfactory.pegacorn.core.constants.systemwide.DRICaTSReferenceProperties;
 import net.fhirfactory.pegacorn.core.interfaces.topology.ProcessingPlantInterface;
 import net.fhirfactory.pegacorn.core.model.componentid.ComponentIdType;
 import net.fhirfactory.pegacorn.core.model.topology.endpoints.adapters.HTTPClientAdapter;
@@ -65,7 +65,7 @@ public class HestiaDMHTTPClient extends InternalFHIRClientProxy {
     private TopologyIM topologyIM;
 
     @Inject
-    private PegacornReferenceProperties systemWideProperties;
+    private DRICaTSReferenceProperties systemWideProperties;
 
     @Inject
     private ProcessingPlantInterface processingPlant;

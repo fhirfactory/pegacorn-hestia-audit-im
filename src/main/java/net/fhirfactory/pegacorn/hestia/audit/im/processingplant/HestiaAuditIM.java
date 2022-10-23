@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.hestia.audit.im.processingplant;
 
-import net.fhirfactory.pegacorn.core.constants.systemwide.PegacornReferenceProperties;
+import net.fhirfactory.pegacorn.core.constants.systemwide.DRICaTSReferenceProperties;
 import net.fhirfactory.pegacorn.core.model.topology.role.ProcessingPlantRoleEnum;
 import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
 import net.fhirfactory.pegacorn.processingplant.ProcessingPlant;
@@ -35,7 +35,7 @@ public abstract class HestiaAuditIM extends ProcessingPlant {
     private FHIRElementTopicFactory fhirElementTopicFactory;
 
     @Inject
-    private PegacornReferenceProperties pegacornReferenceProperties;
+    private DRICaTSReferenceProperties pegacornReferenceProperties;
 
     //
     // Constructor(s)
