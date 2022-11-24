@@ -34,7 +34,7 @@ import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
 import net.fhirfactory.pegacorn.core.model.petasos.uow.UoW;
 import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWPayload;
 import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWProcessingOutcomeEnum;
-import net.fhirfactory.pegacorn.core.model.transaction.model.PegacornTransactionOutcome;
+import net.fhirfactory.pegacorn.core.model.transaction.model.InternalTransactionOutcome;
 import net.fhirfactory.pegacorn.core.model.transaction.model.SimpleResourceID;
 import net.fhirfactory.pegacorn.petasos.endpoints.services.tasking.CapabilityUtilisationBroker;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
@@ -188,9 +188,9 @@ public class HestiaDMJGroupsClient {
             outcome.setCreated(false);
             return(outcome);
         }
-        PegacornTransactionOutcome transactionOutcome = null;
+        InternalTransactionOutcome transactionOutcome = null;
         try {
-            transactionOutcome = getJSONMapper().readValue(methodOutcomeString, PegacornTransactionOutcome.class);
+            transactionOutcome = getJSONMapper().readValue(methodOutcomeString, InternalTransactionOutcome.class);
         } catch (JsonProcessingException e) {
             getLogger().error(".convertToMethodOutcome(): Cannot parse MethodOutcome object! ", e);
         }
